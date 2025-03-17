@@ -1,6 +1,3 @@
-I added the slogan to the README for better branding. Let me know if you need any more refinements! 🚀  
-
----
 
 # 🌟 WheelCare Web App 🌟  
 ## 🏁 *WheelCare – We Care for Your Journey!* 🏁  
