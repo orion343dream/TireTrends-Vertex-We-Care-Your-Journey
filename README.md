@@ -1,10 +1,10 @@
 
-# 🌟 WheelCare Web App 🌟  
+# 🌟 TireTrends Web App 🌟  
 ##  🚗   *We Care for Your Journey!*   🏆
 
 ## 📄 Overview  
 
-The **WheelCare Web App** is an all-in-one platform designed to enhance 🚗 tyre and vehicle 🌟 accessory management for both customers and administrators. This web-based solution streamlines 🛒 product sales, 📈 order processing, 💼 inventory tracking, and 🏰 supplier management, providing a seamless experience for businesses and consumers alike.  
+The **tiretrends Web App** is an all-in-one platform designed to enhance 🚗 tyre and vehicle 🌟 accessory management for both customers and administrators. This web-based solution streamlines 🛒 product sales, 📈 order processing, 💼 inventory tracking, and 🏰 supplier management, providing a seamless experience for businesses and consumers alike.  
 
 ## 🏷️ Features  
 
@@ -43,7 +43,7 @@ The **WheelCare Web App** is an all-in-one platform designed to enhance 🚗 tyr
    ```  
 2. Configure the database in `application.properties`:  
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/wheelcare
+   spring.datasource.url=jdbc:mysql://localhost:3306/tiretrends
    spring.datasource.username=root
    spring.datasource.password=yourpassword
    ```  
@@ -79,6 +79,6 @@ This project is licensed under the MIT License.
 
 ## 📞 Contact  
 
-For inquiries or support, contact **[yourname@email.com](mailto:yourname@email.com)**.  
+For inquiries or support, contact **[sadaruwan.optimous@gmail.com](mailto:sadaruwan.optimous@gmail.com)**.  
 
-🚀 *WheelCare – We Care for Your Journey!* 🚀  
+🚀 *TireTrends – We Care for Your Journey!* 🚀  
