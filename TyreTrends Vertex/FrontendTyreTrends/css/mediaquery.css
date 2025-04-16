@@ -1,0 +1,429 @@
+@charset "utf-8";
+/* CSS Document */
+/*==========  Non-Mobile First Method  ==========*/
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1920px) {
+	form{
+        margin-bottom: 0px;
+    }
+    .form-label {
+        margin-bottom: 0.1rem;
+    }
+}
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1536px) {
+	.slider_image_caption {
+	    width: 400px;
+	}
+	.slider_image_caption_item{
+	    width: 400px;
+	    height: 400px;
+	}
+	.bike{
+	    width: 100% !important;
+	}
+	.installments_slider p{
+		font-size: 11px;
+	}
+}
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1280px) {
+	.product_div {
+        min-height: 349px;
+    }
+}
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1199px) {
+	.product_div {
+        min-height: 301px;
+    }
+	.top_logo {
+        width: 140px !important;
+    }
+    .navbar-light .navbar-nav .nav-link {
+        font-size: 11px;
+    }
+    .nav_user_icon {
+        width: 30px;
+    }
+}
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1024px) {
+	.pro_grid_card {
+		min-height: 360px;
+	}
+	.product_col {
+		padding-right: 10px;
+	}
+	.installments_slider{
+		width: 100%;
+	}
+	.register_content img{
+		width: 95%;
+	}
+	.order_inputs .inner_btn{
+		font-size: 14px;
+		padding: 12px 15px;
+	}
+	.register_content{
+		margin-bottom: 50px;
+	}
+	.bike_con{
+		margin-bottom: 65px;
+	}
+	.footer_pay_img{
+		width: 100% !important;
+	}
+	.top_logo {
+        width: 126px !important;
+    }
+
+}
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 991px) {
+    .navbar-light .navbar-toggler {
+        border-color: transparent;
+    }
+	.mobile_only_icons{
+		margin-left: auto;
+        position: relative;
+        right: 20px;
+	}
+	.main_slider .carousel-item{
+		height: 45vh;
+	}
+	.navbar-light .navbar-nav .nav-link {
+		border-bottom: 1px solid #D3D3D3;
+		height: 50px;
+	}
+	.navbar-collapse{
+		margin-top: 20px;
+	}
+	.user_nav_link {
+		border-right: none;
+		border-bottom: none !important;
+	}
+	.order_summary{
+		margin-left: 0px;
+	}
+	.bike_detail_section{
+		background-image: none !important;
+		background-color: #333333;
+	}
+	.bike_detail_section .jarallax{
+		background-image: none !important;
+		background-color: #333333;
+	}
+	.bike_con {
+		margin-bottom: 20px;
+		padding-bottom: 50px;
+	}
+	.bike_con img{
+		margin-top: 445px;
+		width: 70% !important;
+	}
+	.home_gif_img{
+		width: 50%;
+	}
+    .slider_header_section {
+        position: relative;
+        margin-top: -50px;
+    }
+    .anno_count {
+        position: relative;
+        right: -10px;
+        top: 20px;
+        margin-top: -22px;
+    }
+	#jarallax-container-0 {
+        display: none !important;
+    }
+	.product_div {
+        min-height: 359px;
+    }
+}
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 768px) {
+	.inner_header h1{
+		font-size: 30px;
+	}
+	.inner_header {
+		margin-top: 30px;
+		margin-bottom: 10px;
+	}
+	.inner_sub_heading{
+		font-size: 26px;
+	}
+	.top_logo {
+		width: 160px !important;
+	}
+	.single_pay .inner_para{
+		font-size: 14px;
+	}
+	.pro_grid_card {
+		min-height: 360px;
+	}
+	.installments_slider p{
+		font-size: 11px;
+	}
+	.installments_slider .item{
+		padding: 0 12px;
+	}
+	.pro_name h2{
+		font-size: 27px;
+	}
+	.pro_name h5{
+		font-size: 16px;
+	}
+	.stepper-item::after {
+		top: 30px;
+	}
+	.stepper-item .step-counter {
+		width: 60px;
+		height: 60px;
+	}
+	.stepper-item.active {
+		font-weight: bold;
+	}
+	.stepper-item.completed .step-counter {
+		background-color: #DC3237;
+	}
+	.stepper-item.completed::after {
+		top: 30px;
+	}
+	.stepper-item.completed .tick {
+		font-size: 13px;
+		padding: 1px 3px;
+		height: 20px;
+		width: 20px;
+	}
+	.step-counter img{
+		width: 30px;
+	}
+	.track_order p, .track_order img{
+		margin-bottom: 16px !important;
+	}	
+	.main_slider .carousel-item{
+		height: 55vh;
+	}
+	.home_value{
+		margin-bottom: 15px;
+	}
+}
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 767px) {
+	.pro_grid_card {
+		min-height: 454px;
+	}
+	.btn_section{
+		gap: 3px;
+	}
+	.home_value img{
+		width: 60% !important;
+	}
+	.bike_con{
+		margin-top: -100px;
+	}
+	.bike_con img{
+		width: 70% !important;
+		margin-top: 0px !important;
+	}
+	.bike_con {
+		margin-bottom: 0px;
+	}
+	.footer_address{
+		margin-top: 20px;
+	}
+	#table_ongoing_filter{
+		margin-top: 5px !important;
+	}
+	.dataTables_paginate{
+		margin-bottom: 20px !important;
+	}
+    .product_col {
+      margin-bottom: 20px;
+    }
+    .product_details_tab .tab-content {
+      margin-bottom: 30px;
+    }
+    .carousel-indicators .carousel_indi {
+      border-radius: 10px;
+    }
+    .inner_para {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+    .page-link {
+        padding: 3px 9px;
+    }
+    .step-name {
+        margin-top: 5px;
+        font-size: 12px;
+    }
+    .inner_header h1 {
+        font-size: 27px;
+    }
+	.product_div {
+        min-height: 278px;
+    }
+}
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 575px) {
+  .top_logo {
+      width: 120px !important;
+  }
+	.sub_heading {
+      font-size: 12px;
+  }
+	.search-input input {
+        width: 90%;
+    }
+    .search-input-wrapper.change {
+        opacity: 1;
+        visibility: visible;
+        /* transition: all 0.5s 0.5s; */
+        top: 32px;
+        height: 67px;
+    }
+	.search-input-wrapper form{
+    	width: 90%;
+    }
+    .breadcrumb li {
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+	.product_details_tab .nav-link, .product_details_tab .nav-link.active{
+		padding: 14px 10px;
+    	font-size: 10px;
+	}
+	.tabs_row .nav-link, .tabs_row .nav-link.active{
+		padding: 14px 9px;
+    	font-size: 10px;
+	}
+	.inner_btn{
+		font-size: 12px;
+		padding: 12px 9px;
+	}
+	.pro_price h3{
+		font-size: 20px;
+	}
+	.share_btn img{
+		width: 80%;
+	}
+	.track_order_form{
+		justify-content: center;
+	}
+	.main_slider .carousel-item{
+		height: 68vh;
+	}
+	.slider_image_caption{
+		width: 100%;
+		left: 0;
+		right: 0;
+		background-color: #f1f1f170;
+	}
+	.home_offer .offer_box{
+		padding: 4px;
+	}
+	.home_offer .offer_box p{
+		font-size: 12px;
+	}
+	.home_offer .offer_box h1{
+		font-size: 13px;
+	}
+	.search-input {
+		width: 100%;
+		display: flex;
+		align-self: center;
+	  }
+	  .bike_con img{
+		width: 80% !important;
+	}
+	.bike_con {
+		margin-bottom: 10px;
+	}
+	.footer_row .social_icon .fa {
+		padding: 8px;
+		font-size: 15px;
+		width: 28px;
+	}
+	.home_gif_img{
+		width: 100%;
+	}
+	.slider_image_caption_item{
+		width: 400px;
+		height: 400px;
+		margin: auto;
+		left: 0px;
+		right:0px;
+	}
+        .installments_slider .item img{
+            height: 22px !important; 
+            width: auto;
+        }
+  .cancelled_box{
+          width: 75px; 
+          height: 75px; 
+      }
+  .image-grid__item {
+      /* height: 260px; */
+  }
+  .grid-item__name .heading {
+      font-size: 30px !important;
+  }
+  .grid-item {
+      /* border-radius: 0px; */
+	  /* margin-bottom: 2px; */
+  }
+	.product_div {
+        min-height: 289px;
+    }
+    .spec_box img{
+       width: 50px !important;
+    }
+    .spec_box{
+        margin-bottom: 20px;
+    }
+    .spec_box .sub_heading{
+        text-align: left !important;
+    }
+	.spec_box p{
+        text-align: left !important;
+    }
+    .pro_img {
+        background-color: #f1f1f1;
+        padding: 60px;
+        padding-bottom: 100px !important;
+        border-radius: 20px;
+    }
+    .form-label {
+        margin-bottom: 0px;
+    }
+    label {
+        display: inline-block;
+        font-size: 12px;
+    }
+  .pro_grid_card img{
+      width: 70% !important;
+  }
+}
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 480px) {
+	.pro_grid_card {
+		min-height: 275px;
+	}
+}
+/* Custom, iPhone Retina */
+@media only screen and (max-width : 375px) {
+	.pro_name{
+		gap: 0 !important;
+	}
+	.main_slider .carousel-item{
+		height: 75vh;
+	}
+}
+/* Custom, iPhone Retina */
+@media only screen and (max-width : 360px) {
+}
+@media only screen and (max-width : 320px) {
+}
