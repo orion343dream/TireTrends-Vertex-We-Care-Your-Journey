@@ -1,0 +1,1634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | TyreTrends</title>
+    <script src="../js/common.js"></script>
+    <link href="../css/common.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #222831;
+            --secondary: #D65A31;
+            --light-gray: #EEEEEE;
+            --dark-gray: #393E46;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #bf4f2c;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Page Title */
+        .page-title {
+            background-color: var(--primary);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        /* Cart Layout */
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        /* Cart Items */
+        .cart-items {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .cart-count {
+            color: var(--dark-gray);
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .cart-table th {
+            text-align: left;
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--light-gray);
+            color: var(--dark-gray);
+            font-weight: 600;
+        }
+
+        .cart-table td {
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--light-gray);
+            vertical-align: middle;
+        }
+
+        .cart-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-col {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-meta {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        .quantity-col {
+            width: 120px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background-color: var(--light-gray);
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .quantity-btn:hover {
+            background-color: #ddd;
+        }
+
+        .quantity-input {
+            width: 40px;
+            height: 30px;
+            border: none;
+            text-align: center;
+        }
+
+        .price-col {
+            width: 100px;
+            font-weight: 600;
+        }
+
+        .subtotal-col {
+            width: 120px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .remove-col {
+            width: 50px;
+            text-align: center;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            color: #dc3545;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-gray);
+        }
+
+        /* Empty Cart */
+        .empty-cart {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .empty-cart-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: var(--dark-gray);
+        }
+
+        .empty-cart h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .empty-cart p {
+            color: var(--dark-gray);
+            margin-bottom: 30px;
+        }
+
+        /* Cart Summary */
+        .cart-summary {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .summary-label {
+            color: var(--dark-gray);
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .summary-total .summary-value {
+            color: var(--secondary);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        /* Promo Code */
+        .promo-code {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .promo-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .promo-form {
+            display: flex;
+        }
+
+        .promo-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .promo-btn {
+            padding: 10px 15px;
+            background-color: var(--dark-gray);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .promo-btn:hover {
+            background-color: #2c3038;
+        }
+
+        .applied-promo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(40, 167, 69, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .promo-code-text {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .remove-promo {
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            cursor: pointer;
+        }
+
+        /* Continue Shopping */
+        .continue-shopping {
+            display: flex;
+            align-items: center;
+            color: var(--dark-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .continue-shopping:hover {
+            color: var(--secondary);
+        }
+
+        .continue-icon {
+            margin-right: 5px;
+        }
+
+        /* Recommended Products */
+        .recommended-products {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-card-image img {
+            transform: scale(1.05);
+        }
+
+        .product-card-info {
+            padding: 20px;
+        }
+
+        .product-card-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .product-card-price {
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Loading Spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            width: 100%;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .cart-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .continue-shopping {
+                order: 2;
+                margin-top: 10px;
+                justify-content: center;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Header integration adjustments */
+        .page-title {
+            margin-top: 0;
+            padding-top: 40px;
+        }
+
+        .site-header {
+            z-index: 1000;
+        }
+
+        .header-container .nav-links {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<!--<header>-->
+<!--    <div class="container header-container">-->
+<!--        <a href="../index.html" class="logo">Tire<span>Trends</span></a>-->
+<!--        <div class="search-bar">-->
+<!--            <input type="text" placeholder="Search for tools...">-->
+<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
+<!--        </div>-->
+<!--        <button class="mobile-menu-btn">☰</button>-->
+<!--        <ul class="nav-links">-->
+<!--            <li><a href="../pages/products.html">Shop</a></li>-->
+<!--            <li><a href="../pages/tyre-finder.html">Tyre Finder</a></li>-->
+<!--            <li><a href="../pages/service-booking.html">Services</a></li>-->
+<!--            <li><a href="../pages/cart.html">Cart (0)</a></li>-->
+<!--            <li><a href="../pages/authentication.html">Sign In</a></li>-->
+
+<!--        </ul>-->
+<!--    </div>-->
+<!--</header>-->
+<!-- Header Container -->
+<div id="headerContainer">
+    <!-- Header will be loaded here -->
+    <div style="text-align: center; padding: 20px; background-color: #222831; color: white;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        <p>Loading header...</p>
+    </div>
+</div>
+<!-- Page Title -->
+<section class="page-title">
+    <div class="container">
+        <h1>Shopping Cart</h1>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Alerts -->
+    <div class="alert alert-success" id="alertSuccess"></div>
+    <div class="alert alert-error" id="alertError"></div>
+
+    <!-- Cart Content -->
+    <div id="cartContent">
+        <!-- Loading spinner -->
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- Recommended Products -->
+    <section class="recommended-products">
+        <h2 class="section-title">You May Also Like</h2>
+        <div class="product-grid" id="recommendedProducts">
+            <!-- Loading spinner -->
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <div class="container">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="products.html">All Tires</a></li>
+                    <li><a href="tyre-finder.html">By Vehicle</a></li>
+                    <li><a href="products.html?filter=size">By Size</a></li>
+                    <li><a href="products.html?filter=brand">By Brand</a></li>
+                    <li><a href="products.html?filter=offers">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul class="footer-links">
+                    <li><a href="service-booking.html?service=installation">Tire Installation</a></li>
+                    <li><a href="service-booking.html?service=alignment">Wheel Alignment</a></li>
+                    <li><a href="service-booking.html?service=rotation">Tire Rotation</a></li>
+                    <li><a href="service-booking.html?service=repair">Flat Repair</a></li>
+                    <li><a href="service-booking.html">Service Packages</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="shipping.html">Shipping Information</a></li>
+                    <li><a href="warranty.html">Returns & Warranty</a></li>
+                    <li><a href="tire-guide.html">Tire Care Guide</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="locations.html">Store Locations</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Toolnest. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+<!-- Cart Page Specific Scripts -->
+<script>
+    // Global state
+    let cart = {
+        cartItems: [],
+        totalPrice: 0,
+        totalItems: 0,
+        discountAmount: 0,
+        appliedPromoCode: null
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load cart data
+        loadCart();
+
+        // Load recommended products
+        loadRecommendedProducts();
+    });
+
+    /**
+     * Load cart data from API or local storage
+     */
+    function loadCart() {
+        const cartContentContainer = document.getElementById('cartContent');
+
+        // Show loading spinner
+        cartContentContainer.innerHTML = '<div class="spinner-container"><div class="spinner"></div></div>';
+
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            // Get cart from API
+            fetch('http://localhost:8080/api/v1/cart', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid, clear it and load from local storage
+                        clearAuthData();
+                        loadLocalCart();
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 200) {
+                        // Update global cart state
+                        cart = data.data;
+                        // Ensure cartItems exists
+                        if (!cart.cartItems) {
+                            cart.cartItems = [];
+                        }
+                        // Render cart
+                        renderCart();
+                    } else {
+                        throw new Error(data.message || 'Failed to load cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading cart:', error);
+                    // If not already handled as auth error, try local cart
+                    if (error.message !== 'Authentication failed') {
+                        loadLocalCart();
+                    }
+                });
+        } else {
+            // Get cart from local storage
+            loadLocalCart();
+        }
+    }
+
+    /**
+     * Load cart data from local storage
+     */
+    function loadLocalCart() {
+        try {
+            // Get cart from local storage
+            const localCartData = localStorage.getItem('cart');
+            if (localCartData) {
+                // Parse cart data
+                const localCart = JSON.parse(localCartData);
+
+                // Update global cart state with proper validation
+                cart = {
+                    cartItems: Array.isArray(localCart.cartItems) ? localCart.cartItems : [],
+                    totalItems: localCart.totalItems || 0,
+                    totalPrice: localCart.totalPrice || 0,
+                    discountAmount: localCart.discountAmount || 0,
+                    appliedPromoCode: localCart.appliedPromoCode || null
+                };
+
+                // Recalculate totals to ensure accuracy
+                recalculateCartTotals();
+            } else {
+                // Initialize empty cart
+                cart = {
+                    cartItems: [],
+                    totalItems: 0,
+                    totalPrice: 0,
+                    discountAmount: 0,
+                    appliedPromoCode: null
+                };
+            }
+
+            // Render cart
+            renderCart();
+        } catch (error) {
+            console.error('Error loading cart from local storage:', error);
+            // Initialize empty cart as fallback
+            cart = {
+                cartItems: [],
+                totalItems: 0,
+                totalPrice: 0,
+                discountAmount: 0,
+                appliedPromoCode: null
+            };
+            renderEmptyCart();
+        }
+    }
+
+    /**
+     * Render cart content
+     */
+    function renderCart() {
+        const cartContentContainer = document.getElementById('cartContent');
+
+        // Check if cart is empty
+        if (!cart.cartItems || cart.cartItems.length === 0) {
+            renderEmptyCart();
+            return;
+        }
+
+        // Calculate final totals
+        const tax = (cart.totalPrice || 0) * 0.07;
+        const shipping = (cart.totalPrice || 0) >= 100 ? 0 : 9.99;
+        const discount = cart.discountAmount || 0;
+        const total = (cart.totalPrice || 0) + tax + shipping - discount;
+
+        // Create cart layout HTML
+        cartContentContainer.innerHTML = `
+        <div class="cart-layout">
+            <div class="cart-items">
+                <div class="cart-header">
+                    <h2 class="cart-title">Your Cart</h2>
+                    <span class="cart-count">${cart.totalItems} items</span>
+                </div>
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cartItemsContainer">
+                        <!-- Cart items will be rendered here -->
+                    </tbody>
+                </table>
+                <div class="cart-actions">
+                    <a href="products.html" class="continue-shopping">
+                        <span class="continue-icon">←</span> Continue Shopping
+                    </a>
+                    <button class="btn btn-outline" id="clearCartBtn">Clear Cart</button>
+                </div>
+            </div>
+            <div class="cart-summary">
+                <h3 class="summary-title">Order Summary</h3>
+                <div class="summary-row">
+                    <span class="summary-label">Subtotal</span>
+                    <span class="summary-value">$${(cart.totalPrice || 0).toFixed(2)}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value">${shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Tax</span>
+                    <span class="summary-value">$${tax.toFixed(2)}</span>
+                </div>
+                ${discount > 0 ? `
+                <div class="summary-row">
+                    <span class="summary-label">Discount</span>
+                    <span class="summary-value">-$${discount.toFixed(2)}</span>
+                </div>
+                ` : ''}
+                <div class="summary-row summary-total">
+                    <span class="summary-label">Total</span>
+                    <span class="summary-value">$${total.toFixed(2)}</span>
+                </div>
+                <a href="checkout.html" class="btn checkout-btn">Proceed to Checkout</a>
+                <div class="promo-code">
+                    <h4 class="promo-title">Promo Code</h4>
+                    <div class="promo-form">
+                        <input type="text" class="promo-input" id="promoInput" placeholder="Enter code">
+                        <button class="promo-btn" id="applyPromoBtn">Apply</button>
+                    </div>
+                    ${cart.appliedPromoCode ? `
+                    <div class="applied-promo">
+                        <span class="promo-code-text">${cart.appliedPromoCode}</span>
+                        <button class="remove-promo" id="removePromoBtn">✕</button>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+
+        // Render cart items
+        renderCartItems();
+
+        // Setup event listeners
+        setupCartEventListeners();
+    }
+
+    /**
+     * Render all cart items
+     */
+    function renderCartItems() {
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+
+        if (!cartItemsContainer) return;
+
+        // Clear existing items
+        cartItemsContainer.innerHTML = '';
+
+        // Render each cart item
+        cart.cartItems.forEach(item => {
+            const cartItemRow = document.createElement('tr');
+
+            // Calculate subtotal (handle both unitPrice and price properties)
+            const unitPrice = item.unitPrice || item.price || 0;
+            const subtotal = unitPrice * item.quantity;
+
+            cartItemRow.innerHTML = `
+            <td class="product-col">
+                <div class="product-image">
+                    <img src="${item.productImage || 'https://via.placeholder.com/80x80?text=Tyre'}" alt="${item.productName}">
+                </div>
+                <div class="product-info">
+                    <h3 class="product-title">${item.productName}</h3>
+                    <div class="product-meta">
+                        ${item.productSize ? item.productSize : ''}
+                        ${item.productType ? ` | ${item.productType}` : ''}
+                    </div>
+                </div>
+            </td>
+            <td class="quantity-col">
+                <div class="quantity-selector">
+                    <button class="quantity-btn decrease-btn" data-id="${item.id || item.productId}">-</button>
+                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" data-id="${item.id || item.productId}">
+                    <button class="quantity-btn increase-btn" data-id="${item.id || item.productId}">+</button>
+                </div>
+            </td>
+            <td class="price-col">$${unitPrice.toFixed(2)}</td>
+            <td class="subtotal-col">$${subtotal.toFixed(2)}</td>
+            <td class="remove-col">
+                <button class="remove-btn" data-id="${item.id || item.productId}">✕</button>
+            </td>
+        `;
+
+            cartItemsContainer.appendChild(cartItemRow);
+        });
+    }
+
+    /**
+     * Render empty cart view
+     */
+    function renderEmptyCart() {
+        const cartContentContainer = document.getElementById('cartContent');
+
+        cartContentContainer.innerHTML = `
+        <div class="empty-cart">
+            <div class="empty-cart-icon">🛒</div>
+            <h2>Your Cart is Empty</h2>
+            <p>Looks like you haven't added any items to your cart yet.</p>
+            <a href="products.html" class="btn">Start Shopping</a>
+        </div>
+    `;
+    }
+
+    /**
+     * Setup cart event listeners
+     */
+    function setupCartEventListeners() {
+        // Quantity decrease buttons
+        const decreaseButtons = document.querySelectorAll('.decrease-btn');
+        decreaseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                updateCartItemQuantity(itemId, -1);
+            });
+        });
+
+        // Quantity increase buttons
+        const increaseButtons = document.querySelectorAll('.increase-btn');
+        increaseButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                updateCartItemQuantity(itemId, 1);
+            });
+        });
+
+        // Quantity input fields
+        const quantityInputs = document.querySelectorAll('.quantity-input');
+        quantityInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const itemId = this.getAttribute('data-id');
+                const newQuantity = parseInt(this.value);
+                setCartItemQuantity(itemId, newQuantity);
+            });
+        });
+
+        // Remove buttons
+        const removeButtons = document.querySelectorAll('.remove-btn');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                removeCartItem(itemId);
+            });
+        });
+
+        // Clear cart button
+        const clearCartBtn = document.getElementById('clearCartBtn');
+        if (clearCartBtn) {
+            clearCartBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear your cart?')) {
+                    clearCart();
+                }
+            });
+        }
+
+        // Apply promo button
+        const applyPromoBtn = document.getElementById('applyPromoBtn');
+        if (applyPromoBtn) {
+            applyPromoBtn.addEventListener('click', function() {
+                const promoCode = document.getElementById('promoInput').value.trim();
+                if (promoCode) {
+                    applyPromoCode(promoCode);
+                } else {
+                    showError('Please enter a promo code.');
+                }
+            });
+        }
+
+        // Remove promo button
+        const removePromoBtn = document.getElementById('removePromoBtn');
+        if (removePromoBtn) {
+            removePromoBtn.addEventListener('click', function() {
+                removePromoCode();
+            });
+        }
+    }
+
+    /**
+     * Update cart item quantity by a delta
+     * @param {string} itemId Cart item ID or product ID
+     * @param {number} delta Quantity change amount (-1 or 1)
+     */
+    function updateCartItemQuantity(itemId, delta) {
+        // Find the item in the cart
+        const item = cart.cartItems.find(item => (item.id || item.productId) == itemId);
+
+        if (!item) return;
+
+        // Calculate new quantity
+        const newQuantity = item.quantity + delta;
+
+        // Ensure quantity is at least 1
+        if (newQuantity < 1) return;
+
+        // Update quantity
+        setCartItemQuantity(itemId, newQuantity);
+    }
+
+    /**
+     * Set cart item quantity to a specific value
+     * @param {string} itemId Cart item ID or product ID
+     * @param {number} quantity New quantity
+     */
+    function setCartItemQuantity(itemId, quantity) {
+        // Ensure quantity is at least 1
+        quantity = Math.max(1, quantity);
+
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            // Update cart via API
+            fetch(`http://localhost:8080/api/v1/cart/update?cartItemId=${itemId}&quantity=${quantity}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid, clear it and update local cart
+                        clearAuthData();
+                        updateLocalCartItemQuantity(itemId, quantity);
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 200) {
+                        // Update global cart state
+                        cart = data.data;
+                        // Render updated cart
+                        renderCart();
+                        // Update header cart count
+                        updateCartCount(cart.totalItems);
+                        showSuccess('Cart updated successfully.');
+                    } else {
+                        throw new Error(data.message || 'Failed to update cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating cart:', error);
+                    if (error.message !== 'Authentication failed') {
+                        showError('Failed to update cart. Please try again.');
+                    }
+                });
+        } else {
+            // Update local cart
+            updateLocalCartItemQuantity(itemId, quantity);
+        }
+    }
+
+    /**
+     * Update cart item quantity in local storage
+     * @param {string} itemId Product ID
+     * @param {number} quantity New quantity
+     */
+    function updateLocalCartItemQuantity(itemId, quantity) {
+        // Find the item in the cart
+        const itemIndex = cart.cartItems.findIndex(item => (item.id || item.productId) == itemId);
+
+        if (itemIndex === -1) return;
+
+        // Update quantity
+        cart.cartItems[itemIndex].quantity = quantity;
+
+        // Recalculate totals
+        recalculateCartTotals();
+
+        // Save to local storage
+        saveCartToLocalStorage();
+
+        // Render updated cart
+        renderCart();
+
+        // Update header cart count
+        updateCartCount(cart.totalItems);
+
+        showSuccess('Cart updated successfully.');
+    }
+
+    /**
+     * Remove item from cart
+     * @param {string} itemId Cart item ID or product ID
+     */
+    function removeCartItem(itemId) {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            // Remove item via API
+            fetch(`http://localhost:8080/api/v1/cart/remove?cartItemId=${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid, clear it and remove from local cart
+                        clearAuthData();
+                        removeLocalCartItem(itemId);
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 200) {
+                        // Update global cart state
+                        cart = data.data;
+                        // Render updated cart
+                        renderCart();
+                        // Update header cart count
+                        updateCartCount(cart.totalItems);
+                        showSuccess('Item removed from cart.');
+                    } else {
+                        throw new Error(data.message || 'Failed to remove item');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing item from cart:', error);
+                    if (error.message !== 'Authentication failed') {
+                        showError('Failed to remove item. Please try again.');
+                    }
+                });
+        } else {
+            // Remove from local cart
+            removeLocalCartItem(itemId);
+        }
+    }
+
+    /**
+     * Remove item from local cart
+     * @param {string} itemId Product ID
+     */
+    function removeLocalCartItem(itemId) {
+        // Filter out the item
+        cart.cartItems = cart.cartItems.filter(item => (item.id || item.productId) != itemId);
+
+        // Recalculate totals
+        recalculateCartTotals();
+
+        // Save to local storage
+        saveCartToLocalStorage();
+
+        // Render updated cart
+        renderCart();
+
+        // Update header cart count
+        updateCartCount(cart.totalItems);
+
+        showSuccess('Item removed from cart.');
+    }
+
+    /**
+     * Clear entire cart
+     */
+    function clearCart() {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            // Clear cart via API
+            fetch('http://localhost:8080/api/v1/cart/clear', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid, clear it and clear local cart
+                        clearAuthData();
+                        clearLocalCart();
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 200) {
+                        // Update global cart state
+                        cart = data.data;
+                        // Render empty cart
+                        renderEmptyCart();
+                        // Update header cart count
+                        updateCartCount(0);
+                        showSuccess('Cart cleared successfully.');
+                    } else {
+                        throw new Error(data.message || 'Failed to clear cart');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error clearing cart:', error);
+                    if (error.message !== 'Authentication failed') {
+                        showError('Failed to clear cart. Please try again.');
+                    }
+                });
+        } else {
+            // Clear local cart
+            clearLocalCart();
+        }
+    }
+
+    /**
+     * Clear local cart
+     */
+    function clearLocalCart() {
+        // Reset cart
+        cart = {
+            cartItems: [],
+            totalItems: 0,
+            totalPrice: 0,
+            discountAmount: 0,
+            appliedPromoCode: null
+        };
+
+        // Save to local storage
+        saveCartToLocalStorage();
+
+        // Render empty cart
+        renderEmptyCart();
+
+        // Update header cart count
+        updateCartCount(0);
+
+        showSuccess('Cart cleared successfully.');
+    }
+
+    /**
+     * Apply promo code to cart
+     * @param {string} promoCode Promo code to apply
+     */
+    function applyPromoCode(promoCode) {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            // Apply promo via API
+            fetch(`http://localhost:8080/api/v1/cart/apply-promo?promoCode=${promoCode}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid, clear it and apply to local cart
+                        clearAuthData();
+                        applyLocalPromoCode(promoCode);
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 200) {
+                        // Update global cart state
+                        cart = data.data;
+                        // Render updated cart
+                        renderCart();
+                        showSuccess('Promo code applied successfully.');
+                    } else {
+                        throw new Error(data.message || 'Failed to apply promo code');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error applying promo code:', error);
+                    if (error.message !== 'Authentication failed') {
+                        showError('Invalid promo code. Please try again.');
+                    }
+                });
+        } else {
+            // Apply promo to local cart
+            applyLocalPromoCode(promoCode);
+        }
+    }
+
+    /**
+     * Apply promo code to local cart
+     * @param {string} promoCode Promo code to apply
+     */
+    function applyLocalPromoCode(promoCode) {
+        // For demo, validate promo codes
+        if (promoCode.toUpperCase() === 'WELCOME10') {
+            cart.discountAmount = cart.totalPrice * 0.1; // 10% discount
+            cart.appliedPromoCode = promoCode;
+            showSuccess('Promo code applied successfully.');
+        } else if (promoCode.toUpperCase() === 'SUMMER20') {
+            cart.discountAmount = cart.totalPrice * 0.2; // 20% discount
+            cart.appliedPromoCode = promoCode;
+            showSuccess('Promo code applied successfully.');
+        } else {
+            showError('Invalid promo code. Please try again.');
+            return;
+        }
+
+        // Save to local storage
+        saveCartToLocalStorage();
+
+        // Render updated cart
+        renderCart();
+    }
+
+    /**
+     * Remove promo code from cart
+     */
+    function removePromoCode() {
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            // Remove promo via API
+            fetch('http://localhost:8080/api/v1/cart/remove-promo', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (response.status === 401 || response.status === 403) {
+                        // Token expired or invalid, clear it and remove from local cart
+                        clearAuthData();
+                        removeLocalPromoCode();
+                        throw new Error('Authentication failed');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.code === 200) {
+                        // Update global cart state
+                        cart = data.data;
+                        // Render updated cart
+                        renderCart();
+                        showSuccess('Promo code removed.');
+                    } else {
+                        throw new Error(data.message || 'Failed to remove promo code');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing promo code:', error);
+                    if (error.message !== 'Authentication failed') {
+                        showError('Failed to remove promo code. Please try again.');
+                    }
+                });
+        } else {
+            // Remove promo from local cart
+            removeLocalPromoCode();
+        }
+    }
+
+    /**
+     * Remove promo code from local cart
+     */
+    function removeLocalPromoCode() {
+        cart.discountAmount = 0;
+        cart.appliedPromoCode = null;
+
+        // Save to local storage
+        saveCartToLocalStorage();
+
+        // Render updated cart
+        renderCart();
+
+        showSuccess('Promo code removed.');
+    }
+
+    /**
+     * Recalculate cart totals
+     */
+    function recalculateCartTotals() {
+        // Reset totals
+        cart.totalItems = 0;
+        cart.totalPrice = 0;
+
+        // Calculate from cart items
+        if (Array.isArray(cart.cartItems)) {
+            cart.cartItems.forEach(item => {
+                const unitPrice = item.unitPrice || item.price || 0;
+                cart.totalItems += item.quantity;
+                cart.totalPrice += unitPrice * item.quantity;
+            });
+        }
+
+        // Recalculate discount if promo code is applied
+        if (cart.appliedPromoCode) {
+            if (cart.appliedPromoCode.toUpperCase() === 'WELCOME10') {
+                cart.discountAmount = cart.totalPrice * 0.1; // 10% discount
+            } else if (cart.appliedPromoCode.toUpperCase() === 'SUMMER20') {
+                cart.discountAmount = cart.totalPrice * 0.2; // 20% discount
+            }
+        }
+    }
+
+    /**
+     * Save cart to localStorage
+     */
+    function saveCartToLocalStorage() {
+        try {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        } catch (error) {
+            console.error('Error saving cart to localStorage:', error);
+            showError('Failed to save cart. Your browser storage may be full or restricted.');
+        }
+    }
+
+    /**
+     * Load recommended products
+     */
+    function loadRecommendedProducts() {
+        const recommendedProductsContainer = document.getElementById('recommendedProducts');
+
+        // Call API to get featured or best-selling products
+        fetch('http://localhost:8080/api/v1/products?page=0&size=4')
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    const products = data.data.content || [];
+
+                    // Clear loading spinner
+                    recommendedProductsContainer.innerHTML = '';
+
+                    if (products.length === 0) {
+                        recommendedProductsContainer.innerHTML = '<p>No recommended products available.</p>';
+                        return;
+                    }
+
+                    // Render each product
+                    products.forEach(product => {
+                        const productCard = createProductCard(product);
+                        recommendedProductsContainer.appendChild(productCard);
+                    });
+                } else {
+                    throw new Error(data.message || 'Failed to load recommended products');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading recommended products:', error);
+                recommendedProductsContainer.innerHTML = '<p>Failed to load recommended products.</p>';
+            });
+    }
+
+    /**
+     * Create a product card element
+     * @param {Object} product Product data
+     * @returns {HTMLElement} Product card element
+     */
+    function createProductCard(product) {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+
+        productCard.innerHTML = `
+        <div class="product-card-image">
+            <img src="${product.imageUrl || 'https://via.placeholder.com/300x300?text=Tyre'}" alt="${product.name}">
+        </div>
+        <div class="product-card-info">
+            <h3 class="product-card-title">${product.name}</h3>
+            <div class="product-card-price">$${(product.price || 0).toFixed(2)}</div>
+            <a href="product-detail.html?id=${product.id}" class="btn">View Details</a>
+        </div>
+    `;
+
+        return productCard;
+    }
+
+    /**
+     * Update cart count in header
+     * @param {number} count Cart item count
+     */
+    function updateCartCount(count) {
+        const cartLinks = document.querySelectorAll('a[href="cart.html"]');
+        cartLinks.forEach(link => {
+            link.textContent = `Cart (${count || 0})`;
+        });
+    }
+
+    /**
+     * Show success message
+     * @param {string} message Success message text
+     */
+    function showSuccess(message) {
+        const alert = document.getElementById('alertSuccess');
+        if (alert) {
+            alert.textContent = message;
+            alert.classList.add('show');
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    }
+
+    /**
+     * Show error message
+     * @param {string} message Error message text
+     */
+    function showError(message) {
+        const alert = document.getElementById('alertError');
+        if (alert) {
+            alert.textContent = message;
+            alert.classList.add('show');
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    }
+
+    /**
+     * Clear authentication data
+     */
+    function clearAuthData() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+    }
+</script>
+
+<script>
+    $(document).ready(function() {
+        // Load the header
+        loadHeader();
+    });
+
+    /**
+     * Load the shared header component
+     */
+    function loadHeader() {
+        // Fetch the header HTML
+        $.ajax({
+            url: 'header.html',  // Path to your header.html file
+            method: 'GET',
+            success: function(data) {
+                // Insert the header HTML
+                $('#headerContainer').html(data);
+
+                // Initialize header functionality
+                // Wait a brief moment to ensure scripts are loaded
+                setTimeout(function() {
+                    if (typeof initHeader === 'function') {
+                        initHeader();
+                    } else {
+                        console.error('Header initialization function not found');
+                    }
+                }, 100);
+
+                // Highlight the current page in navigation
+                highlightCurrentPage();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading header:', error);
+                $('#headerContainer').html(`
+                        <div style="background-color: #222831; color: white; padding: 15px 0; text-align: center;">
+                            <div class="container">
+                                <p>Unable to load header. Please refresh the page.</p>
+                                <a href="../index.html" style="color: #D65A31; text-decoration: none; font-weight: bold;">
+                                    Go to Homepage
+                                </a>
+                            </div>
+                        </div>
+                    `);
+            }
+        });
+    }
+
+    /**
+     * Highlight the current page in navigation
+     */
+    function highlightCurrentPage() {
+        // Get current page filename
+        const currentPage = window.location.pathname.split('/').pop().split('?')[0];
+
+        // Add active class to corresponding navigation link in both desktop and mobile views
+        $(`.nav-link[href="${currentPage}"]`).addClass('active');
+        $(`.dropdown-item[href="${currentPage}"]`).addClass('active');
+        $(`.mobile-menu a[href="${currentPage}"]`).addClass('active');
+    }
+</script>
+</body>
+</html>

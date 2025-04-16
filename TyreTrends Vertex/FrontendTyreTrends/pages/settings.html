@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../js/common.js"></script>
+    <link href="../css/common.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+    /* Header integration adjustments */
+    .page-title {
+        margin-top: 0;
+        padding-top: 40px;
+    }
+
+    .site-header {
+        z-index: 1000;
+    }
+
+    .header-container .nav-links {
+        display: none;
+    }</style>
+</head>
+<!-- Header Section -->
+<!--<header>-->
+<!--    <div class="container header-container">-->
+<!--        <a href="../index.html" class="logo">Tire<span>Trends</span></a>-->
+<!--        <div class="search-bar">-->
+<!--            <input type="text" placeholder="Search for tools...">-->
+<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
+<!--        </div>-->
+<!--        <button class="mobile-menu-btn">☰</button>-->
+<!--        <ul class="nav-links">-->
+<!--            <li><a href="../pages/products.html">Shop</a></li>-->
+<!--            <li><a href="../pages/tyre-finder.html">Tyre Finder</a></li>-->
+<!--            <li><a href="../pages/service-booking.html">Services</a></li>-->
+<!--            <li><a href="../pages/cart.html">Cart (0)</a></li>-->
+<!--            <li><a href="../pages/authentication.html">Sign In</a></li>-->
+
+<!--        </ul>-->
+<!--    </div>-->
+<!--</header>-->
+<!-- Header Container -->
+<div id="headerContainer">
+    <!-- Header will be loaded here -->
+    <div style="text-align: center; padding: 20px; background-color: #222831; color: white;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        <p>Loading header...</p>
+    </div>
+</div>
+<body>
+<!-- Footer Section -->
+<footer>
+    <div class="container">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="products.html">All Tires</a></li>
+                    <li><a href="tyre-finder.html">By Vehicle</a></li>
+                    <li><a href="products.html?filter=size">By Size</a></li>
+                    <li><a href="products.html?filter=brand">By Brand</a></li>
+                    <li><a href="products.html?filter=offers">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul class="footer-links">
+                    <li><a href="service-booking.html?service=installation">Tire Installation</a></li>
+                    <li><a href="service-booking.html?service=alignment">Wheel Alignment</a></li>
+                    <li><a href="service-booking.html?service=rotation">Tire Rotation</a></li>
+                    <li><a href="service-booking.html?service=repair">Flat Repair</a></li>
+                    <li><a href="service-booking.html">Service Packages</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="shipping.html">Shipping Information</a></li>
+                    <li><a href="warranty.html">Returns & Warranty</a></li>
+                    <li><a href="tire-guide.html">Tire Care Guide</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="locations.html">Store Locations</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Toolnest. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    $(document).ready(function() {
+        // Load the header
+        loadHeader();
+    });
+
+    /**
+     * Load the shared header component
+     */
+    function loadHeader() {
+        // Fetch the header HTML
+        $.ajax({
+            url: 'header.html',  // Path to your header.html file
+            method: 'GET',
+            success: function(data) {
+                // Insert the header HTML
+                $('#headerContainer').html(data);
+
+                // Initialize header functionality
+                // Wait a brief moment to ensure scripts are loaded
+                setTimeout(function() {
+                    if (typeof initHeader === 'function') {
+                        initHeader();
+                    } else {
+                        console.error('Header initialization function not found');
+                    }
+                }, 100);
+
+                // Highlight the current page in navigation
+                highlightCurrentPage();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading header:', error);
+                $('#headerContainer').html(`
+                        <div style="background-color: #222831; color: white; padding: 15px 0; text-align: center;">
+                            <div class="container">
+                                <p>Unable to load header. Please refresh the page.</p>
+                                <a href="../index.html" style="color: #D65A31; text-decoration: none; font-weight: bold;">
+                                    Go to Homepage
+                                </a>
+                            </div>
+                        </div>
+                    `);
+            }
+        });
+    }
+
+    /**
+     * Highlight the current page in navigation
+     */
+    function highlightCurrentPage() {
+        // Get current page filename
+        const currentPage = window.location.pathname.split('/').pop().split('?')[0];
+
+        // Add active class to corresponding navigation link in both desktop and mobile views
+        $(`.nav-link[href="${currentPage}"]`).addClass('active');
+        $(`.dropdown-item[href="${currentPage}"]`).addClass('active');
+        $(`.mobile-menu a[href="${currentPage}"]`).addClass('active');
+    }
+</script>
+</body>
+</html>

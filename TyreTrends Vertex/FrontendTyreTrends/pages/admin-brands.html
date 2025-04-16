@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brands Management | TyreTrends Admin</title>
+    <!-- Include jQuery first -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- The same styles as in the original file -->
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #222831;
+            --secondary: #D65A31;
+            --light-gray: #EEEEEE;
+            --dark-gray: #393E46;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --white: #ffffff;
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb span:not(:last-child)::after {
+            content: '/';
+            margin: 0 8px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--dark-gray);
+            margin-left: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            margin-left: 30px;
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 180px;
+            padding: 10px 0;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--light-gray);
+            margin: 8px 0;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--primary);
+            color: white;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            z-index: 99;
+        }
+
+        .sidebar-collapsed .sidebar {
+            left: calc(-1 * var(--sidebar-width));
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        .nav-icon {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+        }
+
+        .nav-badge {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .nav-menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px 20px 5px;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            flex: 1;
+            transition: margin-left 0.3s ease;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #bf4f2c;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(214, 90, 49, 0.1);
+        }
+
+        /* Content Card */
+        .content-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Brands Table */
+        .brands-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .brands-table th,
+        .brands-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .brands-table th {
+            font-weight: 600;
+            color: var(--dark-gray);
+            background-color: var(--light-gray);
+        }
+
+        .brands-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .brands-table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .brand-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-inactive {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .status-featured {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Search and Filter */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            padding: 8px 15px;
+            width: 300px;
+        }
+
+        .search-box input {
+            background: none;
+            border: none;
+            outline: none;
+            width: 100%;
+        }
+
+        .search-icon {
+            color: var(--dark-gray);
+            margin-right: 10px;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .page-info {
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .page-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .page-btn.active {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+
+        .page-btn.disabled {
+            background-color: var(--light-gray);
+            border-color: #ddd;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 600px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        /* Form Styles */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .form-check-input {
+            margin-right: 10px;
+        }
+
+        .form-text {
+            display: block;
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.visible {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar {
+                left: -250px;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .table-toolbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .filter-controls {
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .brands-table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .page-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <a href="admin-dashboard.html" class="logo">Tyre<span>Trends</span> Admin</a>
+        <div class="breadcrumb">
+            <span>Catalog</span>
+            <span>Brands</span>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="header-actions">
+            <button class="action-btn">
+                📃
+                <span class="notification-badge">3</span>
+            </button>
+            <button class="action-btn">
+                🔔
+                <span class="notification-badge">5</span>
+            </button>
+            <button class="action-btn">⚙️</button>
+        </div>
+
+        <div class="user-dropdown">
+            <button class="user-btn" id="user-dropdown-toggle">
+                <div class="user-avatar">A</div>
+                <span class="user-name">Admin</span>
+                <span>▼</span>
+            </button>
+
+            <div class="dropdown-menu" id="user-dropdown-menu">
+                <a href="#" class="dropdown-item">My Profile</a>
+                <a href="#" class="dropdown-item">Account Settings</a>
+                <div class="dropdown-divider"></div>
+                <a href="authentication.html" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="admin-dashboard.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Catalog</div>
+
+        <li class="nav-item">
+            <a href="admin-products.html" class="nav-link">
+                <span class="nav-icon">🛞</span>
+                <span class="nav-text">Products</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-categories.html" class="nav-link">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Categories</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-brands.html" class="nav-link active">
+                <span class="nav-icon">🏷️</span>
+                <span class="nav-text">Brands</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Sales</div>
+
+        <li class="nav-item">
+            <a href="admin-orders.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                <span class="nav-text">Orders</span>
+                <span class="nav-badge">8</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-shipments.html" class="nav-link">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Shipments</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-returns.html" class="nav-link">
+                <span class="nav-icon">↩️</span>
+                <span class="nav-text">Returns</span>
+                <span class="nav-badge">2</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Customers</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">All Customers</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Reports</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Marketing</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">🏷️</span>
+                <span class="nav-text">Discounts</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📧</span>
+                <span class="nav-text">Email Campaigns</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📱</span>
+                <span class="nav-text">Social Media</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Services</div>
+
+        <li class="nav-item">
+            <a href="admin-services.html" class="nav-link">
+                <span class="nav-icon">🔧</span>
+                <span class="nav-text">Service Bookings</span>
+                <span class="nav-badge">3</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Schedule</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">System</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">Admin Users</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Settings</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="authentication.html" class="nav-link">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Page Title -->
+    <div class="page-title">
+        <h1>Brands Management</h1>
+        <button class="btn" id="addBrandBtn">Add New Brand</button>
+    </div>
+
+    <!-- Alerts -->
+    <div class="alert alert-success" id="successAlert">Brand successfully added!</div>
+    <div class="alert alert-danger" id="errorAlert">Error: Something went wrong!</div>
+
+    <!-- Brands List Card -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2 class="card-title">All Brands</h2>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="table-toolbar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchBrands" placeholder="Search brands...">
+            </div>
+            <div class="filter-controls">
+                <select class="filter-select" id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="featured">Featured</option>
+                </select>
+                <select class="filter-select" id="sortFilter">
+                    <option value="name">Sort by Name</option>
+                    <option value="products">Sort by Products</option>
+                    <option value="newest">Sort by Newest</option>
+                    <option value="oldest">Sort by Oldest</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Brands Table -->
+        <div class="table-responsive">
+            <table class="brands-table">
+                <thead>
+                <tr>
+                    <th>Logo</th>
+                    <th>Brand Name</th>
+                    <th>Description</th>
+                    <th>Products</th>
+                    <th>Country</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="brandsTableBody">
+                <!-- Table rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <div class="page-info">Showing <span id="pageStart">1</span> to <span id="pageEnd">10</span> of <span id="totalItems">100</span> brands</div>
+            <div class="page-controls">
+                <button class="page-btn" id="prevPage" disabled>◀</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">10</button>
+                <button class="page-btn" id="nextPage">▶</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Brand Modal -->
+<div class="modal-overlay" id="brandModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Add New Brand</h3>
+            <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="brandForm">
+                <input type="hidden" id="brandId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="brandName" class="form-label">Brand Name *</label>
+                        <input type="text" id="brandName" class="form-control" required>
+                        <div class="error-message" id="brandNameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="country" class="form-label">Country of Origin</label>
+                        <input type="text" id="country" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="logoUrl" class="form-label">Logo URL</label>
+                        <input type="text" id="logoUrl" class="form-control" placeholder="https://example.com/logo.png">
+                        <span class="form-text">Enter a URL for the brand logo image.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="website" class="form-label">Brand Website</label>
+                        <input type="url" id="website" class="form-control" placeholder="https://example.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="yearEstablished" class="form-label">Year Established</label>
+                        <input type="number" id="yearEstablished" class="form-control" placeholder="e.g. 1950">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-label">Status</div>
+                        <div class="form-check">
+                            <input type="checkbox" id="active" class="form-check-input" checked>
+                            <label for="active">Active</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="checkbox" id="featured" class="form-check-input">
+                            <label for="featured">Featured</label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="cancelBtn">Cancel</button>
+            <button class="btn" id="saveBrandBtn">Save Brand</button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+<!-- Modal for Delete Confirmation -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Confirm Delete</h3>
+            <button class="modal-close" id="closeDeleteModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete the brand "<span id="deleteBrandName"></span>"? This action cannot be undone.</p>
+            <p>All products associated with this brand will be affected.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="cancelDeleteBtn">Cancel</button>
+            <button class="btn" id="confirmDeleteBtn" style="background-color: var(--danger);">Delete Brand</button>
+        </div>
+    </div>
+</div>
+
+<!-- Include our custom JS fil e -->
+<script src="../js/ajax/admin-brand.js"></script>
+
+<!-- Authentication check script -->
+<script>
+    // Check if user is logged in and has admin role
+    $(document).ready(function() {
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role');
+
+        // If no token or not admin, redirect to login
+        if (!token || role !== 'ADMIN') {
+            window.location.href = 'authentication.html';
+        }
+    });
+</script>
+</body>
+</html>

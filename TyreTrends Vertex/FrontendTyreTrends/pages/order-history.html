@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History | TyreTrends</title>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="../css/common.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #222831;
+            --secondary: #D65A31;
+            --light-gray: #EEEEEE;
+            --dark-gray: #393E46;
+            --success: #28a745;
+            --error: #dc3545;
+            --warning: #ffc107;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #bf4f2c;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(214, 90, 49, 0.1);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Page Title */
+        .page-title {
+            background-color: var(--primary);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            text-align: center;
+            font-size: 2.5rem;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            margin-top: 10px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Orders Layout */
+        .orders-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+            padding: 30px;
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .orders-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .orders-count {
+            color: var(--dark-gray);
+        }
+
+        /* Order Filter */
+        .order-filters {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--light-gray);
+            overflow-x: auto;
+        }
+
+        .filter-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-item.active {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            font-weight: 600;
+        }
+
+        /* Orders List */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order-card {
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: var(--light-gray);
+            border-bottom: 1px solid #ddd;
+        }
+
+        .order-number {
+            font-weight: 600;
+        }
+
+        .order-date {
+            color: var(--dark-gray);
+        }
+
+        .order-body {
+            padding: 20px;
+        }
+
+        .order-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .order-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .status-processing {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .status-shipped {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info);
+        }
+
+        .status-delivered {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-completed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error);
+        }
+
+        .order-total {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .order-items {
+            margin-bottom: 20px;
+            border-top: 1px solid var(--light-gray);
+            padding-top: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .order-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Tracking Section */
+        .tracking-section {
+            margin-bottom: 20px;
+        }
+
+        .tracking-number {
+            font-family: monospace;
+            padding: 5px 10px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        /* Tracking Progress */
+        .tracking-progress {
+            margin-top: 15px;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .tracking-line {
+            position: absolute;
+            left: 15px;
+            top: 16px;
+            bottom: 16px;
+            width: 2px;
+            background-color: var(--light-gray);
+        }
+
+        .tracking-step {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .tracking-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-icon {
+            position: absolute;
+            left: -30px;
+            width: 30px;
+            height: 30px;
+            background-color: white;
+            border: 2px solid var(--light-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .step-icon.active {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+
+        .step-details {
+            padding-left: 15px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .step-time {
+            color: var(--dark-gray);
+            font-size: 0.85rem;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: var(--light-gray);
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            color: var(--dark-gray);
+            margin-bottom: 20px;
+        }
+
+        /* Loading Spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            width: 100%;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .order-header,
+            .order-status-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .order-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .tracking-number {
+                display: block;
+                margin: 10px 0 0;
+            }
+        }
+
+        /* Header integration adjustments */
+        .page-title {
+            margin-top: 0;
+            padding-top: 40px;
+        }
+
+        .site-header {
+            z-index: 1000;
+        }
+
+        .header-container .nav-links {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<!--<header>-->
+<!--    <div class="container header-container">-->
+<!--        <a href="../index.html" class="logo">Tyre<span>Trends</span></a>-->
+<!--        <div class="search-bar">-->
+<!--            <input type="text" placeholder="Search for products...">-->
+<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
+<!--        </div>-->
+<!--        <button class="mobile-menu-btn">☰</button>-->
+<!--        <ul class="nav-links">-->
+<!--            <li><a href="../pages/products.html">Shop</a></li>-->
+<!--            <li><a href="../pages/tyre-finder.html">Tyre Finder</a></li>-->
+<!--            <li><a href="../pages/service-booking.html">Services</a></li>-->
+<!--            <li><a href="../pages/cart.html">Cart (<span class="cart-count">0</span>)</a></li>-->
+<!--            <li><a href="../pages/authentication.html" id="authLink">Sign In</a></li>-->
+<!--        </ul>-->
+<!--    </div>-->
+<!--</header>-->
+<!-- Header Container -->
+<div id="headerContainer">
+    <!-- Header will be loaded here -->
+    <div style="text-align: center; padding: 20px; background-color: #222831; color: white;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        <p>Loading header...</p>
+    </div>
+</div>
+
+<!-- Page Title -->
+<section class="page-title">
+    <div class="container">
+        <h1>Order History</h1>
+        <p class="page-subtitle">View and track all your past and current orders</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="orders-container">
+        <div class="orders-header">
+            <h2 class="orders-title">Your Orders</h2>
+            <div class="orders-count" id="ordersCount">0 orders</div>
+        </div>
+
+        <div class="order-filters">
+            <div class="filter-item active" data-status="all">All Orders</div>
+            <div class="filter-item" data-status="PENDING">Pending</div>
+            <div class="filter-item" data-status="PROCESSING">Processing</div>
+            <div class="filter-item" data-status="SHIPPED">Shipped</div>
+            <div class="filter-item" data-status="DELIVERED">Delivered</div>
+            <div class="filter-item" data-status="COMPLETED">Completed</div>
+            <div class="filter-item" data-status="CANCELLED">Cancelled</div>
+        </div>
+
+        <div id="ordersList">
+            <!-- Loading spinner -->
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <!-- Pagination will be generated here -->
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <div class="container">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="products.html">All Tyres</a></li>
+                    <li><a href="tyre-finder.html">By Vehicle</a></li>
+                    <li><a href="products.html?filter=size">By Size</a></li>
+                    <li><a href="products.html?filter=brand">By Brand</a></li>
+                    <li><a href="products.html?filter=offers">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul class="footer-links">
+                    <li><a href="service-booking.html?service=installation">Tyre Installation</a></li>
+                    <li><a href="service-booking.html?service=alignment">Wheel Alignment</a></li>
+                    <li><a href="service-booking.html?service=rotation">Tyre Rotation</a></li>
+                    <li><a href="service-booking.html?service=repair">Flat Repair</a></li>
+                    <li><a href="service-booking.html">Service Packages</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="shipping.html">Shipping Information</a></li>
+                    <li><a href="warranty.html">Returns & Warranty</a></li>
+                    <li><a href="tyre-guide.html">Tyre Care Guide</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="locations.html">Store Locations</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 TyreTrends. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Authentication helper functions -->
+<script>
+    /**
+     * Authentication helper functions
+     */
+    function isAuthenticated() {
+        return !!(localStorage.getItem('token') || localStorage.getItem('authToken'));
+    }
+
+    function getToken() {
+        return localStorage.getItem('token') || localStorage.getItem('authToken');
+    }
+
+    function getAuthHeader() {
+        return {
+            'Authorization': `Bearer ${getToken()}`
+        };
+    }
+
+    function redirectToLogin(returnUrl) {
+        const currentPage = returnUrl || window.location.pathname;
+        window.location.href = 'authentication.html?redirect=' + encodeURIComponent(currentPage);
+    }
+
+    function updateAuthUI() {
+        const authLink = document.getElementById('authLink');
+        if (authLink) {
+            if (isAuthenticated()) {
+                authLink.textContent = 'My Account';
+                authLink.href = 'account.html';
+            } else {
+                authLink.textContent = 'Sign In';
+                authLink.href = 'authentication.html';
+            }
+        }
+    }
+
+    // Standard API request handler with authentication
+    function apiRequest(url, method, data) {
+        return new Promise((resolve, reject) => {
+            const options = {
+                url: url,
+                method: method || 'GET',
+                headers: getAuthHeader(),
+                success: function(response) {
+                    if (response.code >= 200 && response.code < 300) {
+                        resolve(response.data);
+                    } else {
+                        reject({message: response.message || 'Error processing request'});
+                    }
+                },
+                error: function(xhr) {
+                    // Handle authentication errors
+                    if (xhr.status === 401 || xhr.status === 403) {
+                        // Clear potentially invalid tokens
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('authToken');
+                        redirectToLogin();
+                        return;
+                    }
+
+                    let errorMsg = 'An error occurred. Please try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    reject({message: errorMsg, status: xhr.status});
+                }
+            };
+
+            // Add data if provided
+            if (data) {
+                options.contentType = 'application/json';
+                options.data = JSON.stringify(data);
+            }
+
+            $.ajax(options);
+        });
+    }
+</script>
+
+<!-- Add order-history.js script -->
+<script src="../js/ajax/order-history.js"></script>
+<script>
+    // Add this diagnostic script to help troubleshoot
+    $(document).ready(function() {
+        console.log("Authentication status:", isAuthenticated());
+        console.log("Current token:", getToken());
+
+        // Test API directly
+        $.ajax({
+            url: 'http://localhost:8080/api/v1/orders',
+            method: 'GET',
+            headers: getAuthHeader(),
+            success: function(response) {
+                console.log("Test API response:", response);
+            },
+            error: function(xhr) {
+                console.error("Test API error:", xhr.status, xhr.statusText);
+            }
+        });
+    });
+</script>
+
+
+<script>
+        $(document).ready(function() {
+        // Load the header
+        loadHeader();
+    });
+
+        /**
+        * Load the shared header component
+        */
+        function loadHeader() {
+        // Fetch the header HTML
+        $.ajax({
+            url: 'header.html',  // Path to your header.html file
+            method: 'GET',
+            success: function(data) {
+                // Insert the header HTML
+                $('#headerContainer').html(data);
+
+                // Initialize header functionality
+                // Wait a brief moment to ensure scripts are loaded
+                setTimeout(function() {
+                    if (typeof initHeader === 'function') {
+                        initHeader();
+                    } else {
+                        console.error('Header initialization function not found');
+                    }
+                }, 100);
+
+                // Highlight the current page in navigation
+                highlightCurrentPage();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading header:', error);
+                $('#headerContainer').html(`
+                        <div style="background-color: #222831; color: white; padding: 15px 0; text-align: center;">
+                            <div class="container">
+                                <p>Unable to load header. Please refresh the page.</p>
+                                <a href="../index.html" style="color: #D65A31; text-decoration: none; font-weight: bold;">
+                                    Go to Homepage
+                                </a>
+                            </div>
+                        </div>
+                    `);
+            }
+        });
+    }
+
+        /**
+        * Highlight the current page in navigation
+        */
+        function highlightCurrentPage() {
+        // Get current page filename
+        const currentPage = window.location.pathname.split('/').pop().split('?')[0];
+
+        // Add active class to corresponding navigation link in both desktop and mobile views
+        $(`.nav-link[href="${currentPage}"]`).addClass('active');
+        $(`.dropdown-item[href="${currentPage}"]`).addClass('active');
+        $(`.mobile-menu a[href="${currentPage}"]`).addClass('active');
+    }
+</script>
+</body>
+</html>

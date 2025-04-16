@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation | TyreTrends</title>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="../css/common.css" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #222831;
+            --secondary: #D65A31;
+            --light-gray: #EEEEEE;
+            --dark-gray: #393E46;
+            --success: #28a745;
+            --error: #dc3545;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #bf4f2c;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(214, 90, 49, 0.1);
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Page Title */
+        .page-title {
+            background-color: var(--primary);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+
+        .page-title h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .page-title p {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Confirmation Section */
+        .confirmation-section {
+            max-width: 900px;
+            margin: 0 auto 50px;
+        }
+
+        .confirmation-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+
+        .confirmation-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .confirmation-subtitle {
+            color: var(--dark-gray);
+        }
+
+        .order-details {
+            border-top: 1px solid var(--light-gray);
+            padding-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+        }
+
+        .detail-value {
+            text-align: right;
+        }
+
+        .address-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .address-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .address-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .order-items {
+            margin-bottom: 30px;
+        }
+
+        .order-items-title {
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--light-gray);
+            font-weight: 600;
+        }
+
+        .item-list {
+            margin-bottom: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .order-summary {
+            background-color: var(--light-gray);
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            font-weight: 600;
+        }
+
+        .summary-total {
+            font-size: 1.2rem;
+            font-weight: 700;
+            padding-top: 10px;
+            margin-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .next-steps {
+            margin-bottom: 30px;
+        }
+
+        .steps-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .steps-list {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .steps-list li {
+            margin-bottom: 10px;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Loading Spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 50px;
+            width: 100%;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Print Styles */
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .print-only {
+                display: block;
+            }
+
+            .container {
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+            }
+
+            .confirmation-card {
+                box-shadow: none;
+                padding: 0;
+            }
+
+            body {
+                background-color: white;
+                color: black;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .address-details {
+                flex-direction: column;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+        }
+
+        /* Header integration adjustments */
+        .page-title {
+            margin-top: 0;
+            padding-top: 40px;
+        }
+
+        .site-header {
+            z-index: 1000;
+        }
+
+        .header-container .nav-links {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<!--<header>-->
+<!--    <div class="container header-container">-->
+<!--        <a href="../index.html" class="logo">Tyre<span>Trends</span></a>-->
+<!--        <div class="search-bar">-->
+<!--            <input type="text" placeholder="Search for products...">-->
+<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
+<!--        </div>-->
+<!--        <button class="mobile-menu-btn">☰</button>-->
+<!--        <ul class="nav-links">-->
+<!--            <li><a href="../pages/products.html">Shop</a></li>-->
+<!--            <li><a href="../pages/tyre-finder.html">Tyre Finder</a></li>-->
+<!--            <li><a href="../pages/service-booking.html">Services</a></li>-->
+<!--            <li><a href="../pages/cart.html">Cart (<span class="cart-count">0</span>)</a></li>-->
+<!--            <li><a href="../pages/authentication.html" id="authLink">Sign In</a></li>-->
+<!--        </ul>-->
+<!--    </div>-->
+<!--</header>-->
+<!-- Header Container -->
+<div id="headerContainer">
+    <!-- Header will be loaded here -->
+    <div style="text-align: center; padding: 20px; background-color: #222831; color: white;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        <p>Loading header...</p>
+    </div>
+</div>
+
+<!-- Page Title -->
+<section class="page-title no-print">
+    <div class="container">
+        <h1>Order Confirmation</h1>
+        <p>Thank you for your order!</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Loading State -->
+    <div class="spinner-container" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Order Confirmation -->
+    <div class="confirmation-section" id="confirmationSection" style="display: none;">
+        <div class="confirmation-card">
+            <div class="confirmation-header">
+                <div class="confirmation-icon">✓</div>
+                <h2 class="confirmation-title">Order Placed Successfully!</h2>
+                <p class="confirmation-subtitle">Thank you for shopping with TyreTrends. Your order has been received and is being processed.</p>
+            </div>
+
+            <div class="order-details">
+                <div class="detail-row">
+                    <div class="detail-label">Order Number:</div>
+                    <div class="detail-value" id="orderNumber">TT-12345678</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Order Date:</div>
+                    <div class="detail-value" id="orderDate">March 23, 2025</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Payment Method:</div>
+                    <div class="detail-value" id="paymentMethod">Credit Card (Visa ending in 4242)</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Order Status:</div>
+                    <div class="detail-value" id="orderStatus">Processing</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Estimated Delivery:</div>
+                    <div class="detail-value" id="estimatedDelivery">March 27 - March 30, 2025</div>
+                </div>
+            </div>
+
+            <div class="address-details">
+                <div class="address-box">
+                    <h3 class="address-title">Shipping Address</h3>
+                    <div class="address-content" id="shippingAddress">
+                        John Doe<br>
+                        123 Main Street, Apt 4B<br>
+                        New York, NY 10001<br>
+                        United States<br>
+                        (555) 123-4567
+                    </div>
+                </div>
+
+                <div class="address-box">
+                    <h3 class="address-title">Billing Address</h3>
+                    <div class="address-content" id="billingAddress">
+                        John Doe<br>
+                        123 Main Street, Apt 4B<br>
+                        New York, NY 10001<br>
+                        United States<br>
+                        (555) 123-4567
+                    </div>
+                </div>
+            </div>
+
+            <div class="order-items">
+                <h3 class="order-items-title">Order Items</h3>
+                <div class="item-list" id="orderItems">
+                    <!-- Order items will be loaded here -->
+                </div>
+
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <div class="summary-label">Subtotal:</div>
+                        <div class="summary-value" id="subtotal">$419.98</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Shipping:</div>
+                        <div class="summary-value" id="shipping">Free</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">Tax:</div>
+                        <div class="summary-value" id="tax">$29.40</div>
+                    </div>
+                    <div class="summary-row" id="discountRow" style="display: none;">
+                        <div class="summary-label">Discount:</div>
+                        <div class="summary-value" id="discount">-$0.00</div>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <div class="summary-label">Total:</div>
+                        <div class="summary-value" id="total">$449.38</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="next-steps">
+                <h3 class="steps-title">What's Next?</h3>
+                <ol class="steps-list">
+                    <li>You will receive an order confirmation email shortly.</li>
+                    <li>Once your order has been shipped, you will receive a shipping confirmation email with tracking information.</li>
+                    <li>You can track your order status in your <a href="order-history.html">account dashboard</a>.</li>
+                    <li>If you have any questions about your order, please <a href="contact.html">contact our customer service</a>.</li>
+                </ol>
+            </div>
+
+            <div class="confirmation-actions no-print">
+                <a href="javascript:window.print()" class="btn btn-outline">Print Receipt</a>
+                <a href="products.html" class="btn btn-outline">Continue Shopping</a>
+                <a href="user-account.html" class="btn">View Order Status</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Print Header -->
+    <div class="print-only">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <h1>TyreTrends</h1>
+            <p>Order Receipt</p>
+        </div>
+    </div>
+
+    <!-- Error Section -->
+    <div class="confirmation-section" id="errorSection" style="display: none;">
+        <div class="confirmation-card">
+            <div class="confirmation-header">
+                <div class="confirmation-icon" style="background-color: rgba(220, 53, 69, 0.1); color: var(--error);">✕</div>
+                <h2 class="confirmation-title">Order Not Found</h2>
+                <p class="confirmation-subtitle">We couldn't find the order details you're looking for.</p>
+            </div>
+
+            <div class="confirmation-actions">
+                <a href="products.html" class="btn btn-outline">Continue Shopping</a>
+                <a href="user-account.html" class="btn">View Your Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <div class="container">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="products.html">All Tyres</a></li>
+                    <li><a href="tyre-finder.html">By Vehicle</a></li>
+                    <li><a href="products.html?filter=size">By Size</a></li>
+                    <li><a href="products.html?filter=brand">By Brand</a></li>
+                    <li><a href="products.html?filter=offers">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul class="footer-links">
+                    <li><a href="service-booking.html?service=installation">Tyre Installation</a></li>
+                    <li><a href="service-booking.html?service=alignment">Wheel Alignment</a></li>
+                    <li><a href="service-booking.html?service=rotation">Tyre Rotation</a></li>
+                    <li><a href="service-booking.html?service=repair">Flat Repair</a></li>
+                    <li><a href="service-booking.html">Service Packages</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="shipping.html">Shipping Information</a></li>
+                    <li><a href="warranty.html">Returns & Warranty</a></li>
+                    <li><a href="tyre-guide.html">Tyre Care Guide</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="locations.html">Store Locations</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 TyreTrends. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Authentication helper functions -->
+<script>
+    /**
+     * Authentication helper functions
+     */
+    function isAuthenticated() {
+        return !!(localStorage.getItem('token') || localStorage.getItem('authToken'));
+    }
+
+    function getToken() {
+        return localStorage.getItem('token') || localStorage.getItem('authToken');
+    }
+
+    function getAuthHeader() {
+        return {
+            'Authorization': `Bearer ${getToken()}`
+        };
+    }
+
+    function redirectToLogin(returnUrl) {
+        const currentPage = returnUrl || window.location.pathname;
+        window.location.href = 'authentication.html?redirect=' + encodeURIComponent(currentPage);
+    }
+
+    function updateAuthUI() {
+        const authLink = document.getElementById('authLink');
+        if (authLink) {
+            if (isAuthenticated()) {
+                authLink.textContent = 'My Account';
+                authLink.href = 'account.html';
+            } else {
+                authLink.textContent = 'Sign In';
+                authLink.href = 'authentication.html';
+            }
+        }
+    }
+
+    // Standard API request handler with authentication
+    function apiRequest(url, method, data) {
+        return new Promise((resolve, reject) => {
+            const options = {
+                url: `http://localhost:8080${url}`,
+                method: method || 'GET',
+                headers: getAuthHeader(),
+                success: function(response) {
+                    if (response.code >= 200 && response.code < 300) {
+                        resolve(response.data);
+                    } else {
+                        reject({message: response.message || 'Error processing request'});
+                    }
+                },
+                error: function(xhr) {
+                    // Handle authentication errors
+                    if (xhr.status === 401 || xhr.status === 403) {
+                        // Clear potentially invalid tokens
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('authToken');
+                        redirectToLogin();
+                        return;
+                    }
+
+                    let errorMsg = 'An error occurred. Please try again.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMsg = xhr.responseJSON.message;
+                    }
+                    reject({message: errorMsg, status: xhr.status});
+                }
+            };
+
+            // Add data if provided
+            if (data) {
+                options.contentType = 'application/json';
+                options.data = JSON.stringify(data);
+            }
+
+            $.ajax(options);
+        });
+    }
+</script>
+
+<!-- Add order-confirmation.js script -->
+<script src="../js/ajax/order-confirmation.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Load the header
+        loadHeader();
+    });
+
+    /**
+     * Load the shared header component
+     */
+    function loadHeader() {
+        // Fetch the header HTML
+        $.ajax({
+            url: 'header.html',  // Path to your header.html file
+            method: 'GET',
+            success: function(data) {
+                // Insert the header HTML
+                $('#headerContainer').html(data);
+
+                // Initialize header functionality
+                // Wait a brief moment to ensure scripts are loaded
+                setTimeout(function() {
+                    if (typeof initHeader === 'function') {
+                        initHeader();
+                    } else {
+                        console.error('Header initialization function not found');
+                    }
+                }, 100);
+
+                // Highlight the current page in navigation
+                highlightCurrentPage();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading header:', error);
+                $('#headerContainer').html(`
+                        <div style="background-color: #222831; color: white; padding: 15px 0; text-align: center;">
+                            <div class="container">
+                                <p>Unable to load header. Please refresh the page.</p>
+                                <a href="../index.html" style="color: #D65A31; text-decoration: none; font-weight: bold;">
+                                    Go to Homepage
+                                </a>
+                            </div>
+                        </div>
+                    `);
+            }
+        });
+    }
+
+    /**
+     * Highlight the current page in navigation
+     */
+    function highlightCurrentPage() {
+        // Get current page filename
+        const currentPage = window.location.pathname.split('/').pop().split('?')[0];
+
+        // Add active class to corresponding navigation link in both desktop and mobile views
+        $(`.nav-link[href="${currentPage}"]`).addClass('active');
+        $(`.dropdown-item[href="${currentPage}"]`).addClass('active');
+        $(`.mobile-menu a[href="${currentPage}"]`).addClass('active');
+    }
+</script>
+
+</body>
+</html>

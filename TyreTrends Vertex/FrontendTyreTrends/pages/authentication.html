@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Login & Registration | Toolnest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2a3f54;
+            --secondary: #e74c3c;
+            --light-gray: #eeeeee;
+            --dark-gray: #394c60;
+            --success: #28a745;
+            --error: #dc3545;
+            --warning: #ffc107;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .auth-container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .auth-header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .auth-logo {
+            margin-bottom: 20px;
+        }
+
+        .auth-logo a {
+            display: inline-block;
+            text-decoration: none;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .auth-logo a span {
+            color: var(--secondary);
+        }
+
+        .auth-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .auth-subtitle {
+            color: var(--dark-gray);
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            color: var(--secondary);
+            border-bottom: 3px solid var(--secondary);
+        }
+
+        .auth-forms {
+            padding: 30px;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .form-control.error {
+            border-color: var(--error);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--dark-gray);
+            cursor: pointer;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error-message.visible {
+            display: block;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-check input {
+            margin-right: 10px;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password {
+            color: var(--dark-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: var(--secondary);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+
+        .btn:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* Social Login */
+        .social-login {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .social-login-divider {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .social-login-divider::before,
+        .social-login-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .social-login-divider span {
+            padding: 0 15px;
+            color: var(--dark-gray);
+        }
+
+        .social-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-icon {
+            font-size: 20px;
+        }
+
+        .password-requirements {
+            margin-top: 10px;
+        }
+
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+        }
+
+        .requirement-icon {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .requirement.met {
+            color: var(--success);
+        }
+
+        .password-strength {
+            height: 5px;
+            background-color: #eee;
+            border-radius: 2px;
+            margin-top: 10px;
+        }
+
+        .password-strength-meter {
+            height: 100%;
+            width: 0;
+            border-radius: 2px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--error);
+            border: 1px solid var(--error);
+        }
+
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .forgot-password-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .forgot-password-form.show {
+            display: block;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-gray);
+        }
+
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .spinner-overlay.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Profile Picture Styles */
+        .profile-picture-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .profile-picture-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--light-gray);
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .profile-picture-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-picture-upload label {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .profile-picture-upload label:hover {
+            background-color: #ddd;
+        }
+
+        .profile-picture-upload input[type="file"] {
+            display: none;
+        }
+
+        .forgot-password-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-gray);
+        }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                margin: 20px auto;
+                max-width: 100%;
+            }
+
+            .auth-forms {
+                padding: 20px;
+            }
+
+            .form-footer {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .social-buttons {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<header>
+    <!-- Navigation will be injected here by common.js -->
+</header>
+
+<!-- Main Content -->
+<div class="container">
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="auth-logo">
+                <a href="../../uploads/index.html">Tool<span>Nest</span></a>
+            </div>
+            <h1 class="auth-title" id="authTitle">Sign In to Your Account</h1>
+            <p class="auth-subtitle" id="authSubtitle">
+                Enter your credentials to access your account
+            </p>
+        </div>
+
+        <div class="auth-tabs">
+            <div class="auth-tab active" data-tab="login">Login</div>
+            <div class="auth-tab" data-tab="register">Register</div>
+        </div>
+
+        <div class="auth-forms">
+            <!-- Alerts -->
+            <div class="alert alert-success" id="alertSuccess"></div>
+            <div class="alert alert-error" id="alertError"></div>
+
+            <!-- Login Form -->
+            <form class="auth-form active" id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail" class="form-label">Email Address</label>
+                    <input
+                            type="email"
+                            id="loginEmail"
+                            class="form-control"
+                            placeholder="example@email.com"
+                            required
+                    />
+                    <div class="error-message" id="loginEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input
+                                type="password"
+                                id="loginPassword"
+                                class="form-control"
+                                placeholder="Enter your password"
+                                required
+                        />
+                        <button
+                                type="button"
+                                class="password-toggle"
+                                id="loginPasswordToggle"
+                        >
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+
+                <div class="form-footer">
+                    <div class="form-check">
+                        <input type="checkbox" id="rememberMe" />
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password" id="forgotPasswordLink">Forgot password?</a>
+
+                </div>
+
+
+                <button type="submit" class="btn" id="loginBtn">Sign In</button>
+
+                <div class="social-login">
+                    <div class="social-login-divider">
+                        <span>Or sign in with</span>
+                    </div>
+                    <div class="social-buttons">
+                        <button
+                                type="button"
+                                class="social-btn"
+                                aria-label="Sign in with Google"
+                        >
+                            <span class="social-icon">G</span>
+                        </button>
+                        <button
+                                type="button"
+                                class="social-btn"
+                                aria-label="Sign in with Facebook"
+                        >
+                            <span class="social-icon">f</span>
+                        </button>
+                        <button
+                                type="button"
+                                class="social-btn"
+                                aria-label="Sign in with Apple"
+                        >
+                            <span class="social-icon">🍎</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Forgot Password Form -->
+            <div class="forgot-password-form" id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="resetEmail" class="form-label">Email Address</label>
+                    <input
+                            type="email"
+                            id="resetEmail"
+                            class="form-control"
+                            placeholder="Enter your email address"
+                            required
+                    >
+                    <div class="error-message" id="resetEmailError"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancelResetBtn">Cancel</button>
+                    <button type="button" class="btn" id="requestResetBtn">Reset Password</button>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="registerForm" enctype="multipart/form-data">
+                <div class="profile-picture-container">
+                    <img id="profilePicturePreview" class="profile-picture-preview" src="" alt="Profile Preview">
+                    <div class="profile-picture-upload">
+                        <label for="profilePicture">Choose Profile Picture</label>
+                        <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerFirstName" class="form-label">First Name</label>
+                    <input
+                            type="text"
+                            id="registerFirstName"
+                            name="firstName"
+                            class="form-control"
+                            placeholder="Enter your first name"
+                            required
+                    />
+                    <div class="error-message" id="registerFirstNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerLastName" class="form-label">Last Name</label>
+                    <input
+                            type="text"
+                            id="registerLastName"
+                            name="lastName"
+                            class="form-control"
+                            placeholder="Enter your last name"
+                            required
+                    />
+                    <div class="error-message" id="registerLastNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail" class="form-label">Email Address</label>
+                    <input
+                            type="email"
+                            id="registerEmail"
+                            name="email"
+                            class="form-control"
+                            placeholder="example@email.com"
+                            required
+                    />
+                    <div class="error-message" id="registerEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPhone" class="form-label">Phone Number</label>
+                    <input
+                            type="tel"
+                            id="registerPhone"
+                            name="phoneNumber"
+                            class="form-control"
+                            placeholder="Enter your phone number"
+                    />
+                    <div class="error-message" id="registerPhoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerAddress" class="form-label">Address</label>
+                    <textarea
+                            id="registerAddress"
+                            name="address"
+                            class="form-control"
+                            placeholder="Enter your address"
+                            rows="3"
+                    ></textarea>
+                    <div class="error-message" id="registerAddressError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <input
+                                type="password"
+                                id="registerPassword"
+                                name="password"
+                                class="form-control"
+                                placeholder="Create a password"
+                                required
+                        />
+                        <button
+                                type="button"
+                                class="password-toggle"
+                                id="registerPasswordToggle"
+                        >
+                            👁️
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-meter" id="passwordStrengthMeter"></div>
+                    </div>
+                    <div class="password-requirements">
+                        <div class="requirement" id="lengthRequirement">
+                            <span class="requirement-icon">○</span>
+                            At least 8 characters
+                        </div>
+                        <div class="requirement" id="uppercaseRequirement">
+                            <span class="requirement-icon">○</span>
+                            At least one uppercase letter
+                        </div>
+                        <div class="requirement" id="lowercaseRequirement">
+                            <span class="requirement-icon">○</span>
+                            At least one lowercase letter
+                        </div>
+                        <div class="requirement" id="numberRequirement">
+                            <span class="requirement-icon">○</span>
+                            At least one number
+                        </div>
+                        <div class="requirement" id="specialRequirement">
+                            <span class="requirement-icon">○</span>
+                            At least one special character
+                        </div>
+                    </div>
+                    <div class="error-message" id="registerPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <div class="input-group">
+                        <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                class="form-control"
+                                placeholder="Confirm your password"
+                                required
+                        />
+                        <button
+                                type="button"
+                                class="password-toggle"
+                                id="confirmPasswordToggle"
+                        >
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="confirmPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="termsAgree" name="termsAgree" required />
+                        <label for="termsAgree"
+                        >I agree to the <a href="terms.html">Terms of Service</a> and
+                            <a href="privacy.html">Privacy Policy</a></label
+                        >
+                    </div>
+                    <div class="error-message" id="termsAgreeError"></div>
+                </div>
+
+                <button type="submit" class="btn" id="registerBtn">
+                    Create Account
+                </button>
+
+                <div class="social-login">
+                    <div class="social-login-divider">
+                        <span>Or sign up with</span>
+                    </div>
+                    <div class="social-buttons">
+                        <button
+                                type="button"
+                                class="social-btn"
+                                aria-label="Sign up with Google"
+                        >
+                            <span class="social-icon">G</span>
+                        </button>
+                        <button
+                                type="button"
+                                class="social-btn"
+                                aria-label="Sign up with Facebook"
+                        >
+                            <span class="social-icon">f</span>
+                        </button>
+                        <button
+                                type="button"
+                                class="social-btn"
+                                aria-label="Sign up with Apple"
+                        >
+                            <span class="social-icon">🍎</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div class="spinner-overlay" id="spinnerOverlay">
+    <div class="spinner"></div>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <!-- Footer will be injected here by common.js -->
+</footer>
+
+<!-- Include Common Nav/Footer -->
+<script src="../js/jquery-3.3.1.min.js"></script>
+
+<script>
+    // Tab switching functionality
+    function setupTabs() {
+        const tabs = document.querySelectorAll(".auth-tab");
+        const authTitle = document.getElementById("authTitle");
+        const authSubtitle = document.getElementById("authSubtitle");
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", function () {
+                // Remove active class from all tabs
+                tabs.forEach((t) => t.classList.remove("active"));
+
+                // Add active class to clicked tab
+                this.classList.add("active");
+
+                // Get tab identifier
+                const tabId = this.getAttribute("data-tab");
+
+                // Hide all forms
+                document.querySelectorAll(".auth-form").forEach((form) => {
+                    form.classList.remove("active");
+                });
+
+                // Show the selected form
+                document.getElementById(tabId + "Form").classList.add("active");
+
+                // Update header text
+                if (tabId === "login") {
+                    authTitle.textContent = "Sign In to Your Account";
+                    authSubtitle.textContent = "Enter your credentials to access your account";
+                } else {
+                    authTitle.textContent = "Create a New Account";
+                    authSubtitle.textContent = "Fill in your details to create an account";
+                }
+
+                // Clear alerts
+                clearAlerts();
+            });
+        });
+    }
+
+    function clearAlerts() {
+        document.getElementById("alertSuccess").classList.remove("show");
+        document.getElementById("alertError").classList.remove("show");
+    }
+
+    function showAlert(type, message) {
+        const alertElement = type === 'success' ? $('#alertSuccess') : $('#alertError');
+        alertElement.text(message).addClass('show');
+
+        setTimeout(() => {
+            alertElement.removeClass('show');
+        }, 5000);
+    }
+
+    // Initialize tabs
+    setupTabs();
+
+    $(document).ready(function() {
+        // Profile picture preview
+        $('#profilePicture').change(function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    $('#profilePicturePreview').attr('src', event.target.result).show();
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Password toggle functionality
+        $('.password-toggle').click(function() {
+            const input = $(this).siblings('input');
+            const type = input.attr('type') === 'password' ? 'text' : 'password';
+            input.attr('type', type);
+            $(this).text(type === 'password' ? '👁️' : '🙈');
+        });
+
+        // Password strength checker
+        $('#registerPassword').on('input', function() {
+            const password = $(this).val();
+            checkPasswordStrength(password);
+        });
+
+        // Login form submission
+        $('#loginForm').submit(function(e) {
+            e.preventDefault();
+            loginUser();
+        });
+
+        // Register form submission
+        $('#registerForm').submit(function(e) {
+            e.preventDefault();
+            registerUser();
+        });
+    });
+
+    function checkPasswordStrength(password) {
+        // Check password requirements
+        const hasLength = password.length >= 8;
+        const hasUpper = /[A-Z]/.test(password);
+        const hasLower = /[a-z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+        // Update requirement indicators
+        updateRequirement('lengthRequirement', hasLength);
+        updateRequirement('uppercaseRequirement', hasUpper);
+        updateRequirement('lowercaseRequirement', hasLower);
+        updateRequirement('numberRequirement', hasNumber);
+        updateRequirement('specialRequirement', hasSpecial);
+
+        // Calculate strength (0-100)
+        let strength = 0;
+        if (hasLength) strength += 20;
+        if (hasUpper) strength += 20;
+        if (hasLower) strength += 20;
+        if (hasNumber) strength += 20;
+        if (hasSpecial) strength += 20;
+
+        // Update strength meter
+        const meter = $('#passwordStrengthMeter');
+        meter.css('width', strength + '%');
+
+        // Update color based on strength
+        if (strength < 40) {
+            meter.css('background-color', '#dc3545'); // Red
+        } else if (strength < 80) {
+            meter.css('background-color', '#ffc107'); // Yellow
+        } else {
+            meter.css('background-color', '#28a745'); // Green
+        }
+    }
+
+    function updateRequirement(id, met) {
+        const element = $('#' + id);
+        element.toggleClass('met', met);
+        element.find('.requirement-icon').text(met ? '✓' : '○');
+    }
+
+    function loginUser() {
+        const email = $('#loginEmail').val();
+        const password = $('#loginPassword').val();
+
+        // Basic validation
+        if (!email || !password) {
+            showAlert('error', 'Please fill in all fields');
+            return;
+        }
+
+        $('#spinnerOverlay').addClass('show');
+
+        $.ajax({
+            url: "http://localhost:8080/api/v1/auth/authenticate",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ email, password }),
+            success: function (data) {
+                if (data.code === 200) {
+                    localStorage.setItem("token", data.data.token);
+                    localStorage.setItem("role", data.data.role);
+
+                    if (data.data.role === "ADMIN") {
+                        window.location.href = "admin-dashboard.html";
+                    } else {
+                        window.location.href = "../../index.html";
+                    }
+                } else {
+                    showAlert('error', data.message || "Login failed");
+                }
+            },
+            error: function(xhr) {
+                let errorMsg = 'An error occurred. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                showAlert('error', errorMsg);
+            },
+            complete: function() {
+                $('#spinnerOverlay').removeClass('show');
+            }
+        });
+    }
+
+    function registerUser() {
+        // Validate form
+        if (!validateRegisterForm()) return;
+
+        $('#spinnerOverlay').addClass('show');
+
+        // Create FormData object
+        const formData = new FormData();
+        formData.append('firstName', $('#registerFirstName').val());
+        formData.append('lastName', $('#registerLastName').val());
+        formData.append('email', $('#registerEmail').val());
+        formData.append('phoneNumber', $('#registerPhone').val());
+        formData.append('address', $('#registerAddress').val());
+        formData.append('password', $('#registerPassword').val());
+
+        // Append profile picture if selected
+        const profilePic = $('#profilePicture')[0].files[0];
+        if (profilePic) {
+            formData.append('profilePicture', profilePic);
+        }
+
+        // Send AJAX request
+        $.ajax({
+            url: 'http://localhost:8080/api/v1/user/register',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.code === 201) {
+                    showAlert('success', 'Registration successful! Redirecting to login...');
+                    setTimeout(() => {
+                        window.location.href = 'authentication.html';
+                    }, 2000);
+                } else {
+                    showAlert('error', response.message || 'Registration failed');
+                }
+            },
+            error: function(xhr) {
+                let errorMsg = 'An error occurred. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                showAlert('error', errorMsg);
+            },
+            complete: function() {
+                $('#spinnerOverlay').removeClass('show');
+            }
+        });
+    }
+
+    function validateRegisterForm() {
+        let isValid = true;
+
+        // Clear previous errors
+        $('.error-message').text('').removeClass('visible');
+        $('.form-control').removeClass('error');
+
+        // Validate first name
+        if (!$('#registerFirstName').val()) {
+            showError('registerFirstName', 'First name is required');
+            isValid = false;
+        }
+
+        // Validate last name
+        if (!$('#registerLastName').val()) {
+            showError('registerLastName', 'Last name is required');
+            isValid = false;
+        }
+
+        // Validate email
+        const email = $('#registerEmail').val();
+        if (!email) {
+            showError('registerEmail', 'Email is required');
+            isValid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showError('registerEmail', 'Please enter a valid email address');
+            isValid = false;
+        }
+
+        // Validate password
+        const password = $('#registerPassword').val();
+        if (!password) {
+            showError('registerPassword', 'Password is required');
+            isValid = false;
+        } else if (password.length < 8) {
+            showError('registerPassword', 'Password must be at least 8 characters');
+            isValid = false;
+        }
+
+        // Validate confirm password
+        const confirmPassword = $('#confirmPassword').val();
+        if (!confirmPassword) {
+            showError('confirmPassword', 'Please confirm your password');
+            isValid = false;
+        } else if (password !== confirmPassword) {
+            showError('confirmPassword', 'Passwords do not match');
+            isValid = false;
+        }
+
+        // Validate terms agreement
+        if (!$('#termsAgree').is(':checked')) {
+            showError('termsAgree', 'You must agree to the terms and conditions');
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function showError(fieldId, message) {
+        $(`#${fieldId}`).addClass('error');
+        $(`#${fieldId}Error`).text(message).addClass('visible');
+    }
+
+    $(document).ready(function() {
+        // Login Form Submission Handler
+        $('#loginForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // Clear only login-specific error messages
+            $('#loginEmailError, #loginPasswordError').text('').removeClass('visible');
+
+            // Get login credentials
+            const email = $('#loginEmail').val().trim();
+            const password = $('#loginPassword').val();
+
+            // Check if forgot password form is visible
+            if ($('#forgotPasswordForm').is(':visible')) {
+                // If forgot password form is open, do not proceed with login
+                return;
+            }
+
+            // Validate login inputs
+            let isValid = true;
+
+            if (!email) {
+                $('#loginEmailError').text('Please enter your email address').addClass('visible');
+                isValid = false;
+            }
+
+            if (!password) {
+                $('#loginPasswordError').text('Please enter your password').addClass('visible');
+                isValid = false;
+            }
+
+            // Proceed with login if inputs are valid
+            if (isValid) {
+                $('#spinnerOverlay').addClass('show');
+                $('#loginBtn').prop('disabled', true);
+
+                $.ajax({
+                    url: "http://localhost:8080/api/v1/auth/authenticate",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({ email, password }),
+                    success: function (data) {
+                        console.log("Login response:", data);
+
+                        if (data.code === 200 && data.data && data.data.token) {
+                            // Store authentication data
+                            localStorage.setItem("token", data.data.token);
+
+                            // Store role if available
+                            if (data.data.role) {
+                                localStorage.setItem("role", data.data.role);
+                            }
+
+                            // Store email if available
+                            if (data.data.email) {
+                                localStorage.setItem("userEmail", data.data.email);
+                            }
+
+                            showAlert('success', 'Login successful! Redirecting...');
+
+                            // Redirect based on role
+                            setTimeout(function() {
+                                if (data.data.role === "ADMIN") {
+                                    window.location.href = "admin-dashboard.html";
+                                } else {
+                                    window.location.href = "../index.html";
+                                }
+                            }, 1000);
+                        } else {
+                            showAlert('error', data.message || "Login failed");
+                        }
+                    },
+                    error: function(xhr) {
+                        let errorMsg = 'An error occurred. Please try again.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMsg = xhr.responseJSON.message;
+                        }
+                        showAlert('error', errorMsg);
+                    },
+                    complete: function() {
+                        $('#spinnerOverlay').removeClass('show');
+                        $('#loginBtn').prop('disabled', false);
+                    }
+                });
+            }
+        });
+
+        // Forgot Password Link Handler
+        $('#forgotPasswordLink').click(function(e) {
+            e.preventDefault();
+
+            // Toggle forgot password form
+            $('#forgotPasswordForm').toggle();
+
+            // Clear any existing login error messages
+            $('#loginEmailError, #loginPasswordError').text('').removeClass('visible');
+        });
+
+        // Cancel Reset Button Handler
+        $('#cancelResetBtn').click(function() {
+            $('#forgotPasswordForm').hide();
+            $('#resetEmail').val('');
+            $('#resetEmailError').text('').removeClass('visible');
+        });
+
+        // Request Reset Button Handler
+        $('#requestResetBtn').click(function() {
+            const email = $('#resetEmail').val().trim();
+            const resetBtn = $(this);
+
+            // Clear previous reset email errors
+            $('#resetEmailError').text('').removeClass('visible');
+
+            // Validate reset email
+            if (!email) {
+                $('#resetEmailError').text('Please enter your email address').addClass('visible');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                $('#resetEmailError').text('Please enter a valid email address').addClass('visible');
+                return;
+            }
+
+            // Proceed with password reset request
+            resetBtn.prop('disabled', true);
+            $('#spinnerOverlay').addClass('show');
+
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/auth/forgot-password',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ email: email }),
+                success: function(response) {
+                    showAlert('success', 'Password reset instructions have been sent to your email.');
+                    $('#forgotPasswordForm').hide();
+                    $('#resetEmail').val('');
+                },
+                error: function(xhr) {
+                    const errorMsg = xhr.responseJSON ?
+                        xhr.responseJSON.message :
+                        'Failed to send password reset instructions. Please try again.';
+                    showAlert('error', errorMsg);
+                },
+                complete: function() {
+                    resetBtn.prop('disabled', false);
+                    $('#spinnerOverlay').removeClass('show');
+                }
+            });
+        });
+
+        // Email Validation Helper
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+    });
+
+</script>
+</body>
+</html>

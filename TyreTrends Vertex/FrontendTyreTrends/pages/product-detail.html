@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail | ToolNest</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2E3B4E;      /* Dark blue-gray for header/footer */
+            --secondary: #F58634;    /* Orange accent color for buttons/highlights */
+            --light-gray: #F2F2F2;   /* Light background color */
+            --dark-gray: #4A5568;    /* Darker gray for text */
+            --success: #2ECC71;      /* Green for success messages */
+            --error: #E74C3C;        /* Red for error messages */
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #E67A20; /* Slightly darker orange */
+        }
+
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .search-bar {
+            display: flex;
+            flex: 1;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-bar button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            background-color: white;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .breadcrumb-list {
+            display: flex;
+            list-style: none;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-item:not(:last-child)::after {
+            content: '/';
+            margin: 0 10px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb-link {
+            color: var(--dark-gray);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb-link:hover {
+            color: var(--secondary);
+        }
+
+        .breadcrumb-current {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        /* Product Detail */
+        .product-detail {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+        }
+
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        /* Product Gallery */
+        .product-gallery {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-main-image {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .product-main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-thumbnails {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .product-thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .product-thumbnail.active {
+            border-color: var(--secondary);
+        }
+
+        .product-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Product Info */
+        .product-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-brand {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .product-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .star {
+            color: gold;
+            margin-right: 2px;
+        }
+
+        .rating-count {
+            margin-left: 10px;
+            color: var(--dark-gray);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .product-specs {
+            margin-bottom: 20px;
+        }
+
+        .spec-item {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .spec-label {
+            width: 120px;
+            font-weight: 600;
+        }
+
+        .spec-value {
+            flex: 1;
+        }
+
+        .product-stock {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .in-stock {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+
+        .low-stock {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .out-of-stock {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quantity-selector label {
+            margin-right: 10px;
+            font-weight: 600;
+        }
+
+        .quantity-input {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--dark-gray);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background-color: var(--light-gray);
+        }
+
+        .action-icon {
+            margin-right: 5px;
+        }
+
+        /* Product Description Tabs */
+        .product-tabs {
+            padding: 0 30px 30px;
+        }
+
+        .tabs-nav {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--dark-gray);
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .description-content h3 {
+            margin-bottom: 15px;
+        }
+
+        .description-content p {
+            margin-bottom: 15px;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .specs-table th,
+        .specs-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .specs-table th {
+            background-color: var(--light-gray);
+            font-weight: 600;
+        }
+
+        /* Reviews Section */
+        .reviews-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .review-summary {
+            display: flex;
+            margin-bottom: 30px;
+            gap: 30px;
+        }
+
+        .overall-rating {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .overall-rating .big-rating {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .rating-distribution {
+            flex: 1;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .rating-level {
+            width: 100px;
+            display: flex;
+            align-items: center;
+        }
+
+        .rating-progress {
+            flex: 1;
+            height: 8px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+
+        .rating-progress-bar {
+            height: 100%;
+            background-color: gold;
+        }
+
+        .rating-count {
+            width: 50px;
+            text-align: right;
+        }
+
+        .review-list {
+            margin-top: 20px;
+        }
+
+        .review-item {
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+        }
+
+        .review-item:last-child {
+            border-bottom: none;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+        }
+
+        .review-date {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+
+        .review-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .write-review-btn {
+            margin-top: 20px;
+            align-self: flex-start;
+        }
+
+        .review-form {
+            display: none;
+            background-color: var(--light-gray);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .review-form.active {
+            display: block;
+        }
+
+        .review-form h3 {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .rating-input {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+
+        .rating-input input {
+            display: none;
+        }
+
+        .rating-input label {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .rating-input label:hover,
+        .rating-input label:hover ~ label,
+        .rating-input input:checked ~ label {
+            color: gold;
+        }
+
+        /* Related Products */
+        .related-products {
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .related-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .product-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-card-image img {
+            transform: scale(1.05);
+        }
+
+        .product-card-info {
+            padding: 20px;
+        }
+
+        .product-card-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .product-card-price {
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        /* Loading Spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-thumbnails {
+                justify-content: center;
+            }
+
+            .review-summary {
+                flex-direction: column;
+            }
+
+            .overall-rating {
+                width: 100%;
+            }
+
+            .related-products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 576px) {
+            .product-tabs {
+                padding: 0 15px 15px;
+            }
+
+            .tabs-nav {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                padding: 10px 15px;
+                flex: 1;
+            }
+
+            .related-products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Header integration adjustments */
+        .page-title {
+            margin-top: 0;
+            padding-top: 40px;
+        }
+
+        .site-header {
+            z-index: 1000;
+        }
+
+        .header-container .nav-links {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<!--<header>-->
+<!--    <div class="container header-container">-->
+<!--        <a href="../index.html" class="logo">Tyre<span>Trends</span></a>-->
+<!--        <form id="searchForm" class="search-bar">-->
+<!--            <input type="text" id="searchInput" placeholder="Search for tyres...">-->
+<!--            <button type="submit"><i class="fas fa-search"></i></button>-->
+<!--        </form>-->
+<!--        <button class="mobile-menu-btn">☰</button>-->
+<!--        <ul class="nav-links">-->
+<!--            <li><a href="products.html" class="active">Shop</a></li>-->
+<!--            <li><a href="tyre-finder.html">Tyre Finder</a></li>-->
+<!--            <li><a href="service-booking.html">Services</a></li>-->
+<!--            <li><a href="cart.html">Cart (0)</a></li>-->
+<!--            <li><a href="authentication.html">Sign In</a></li>-->
+<!--        </ul>-->
+<!--    </div>-->
+<!--</header>-->
+
+<!-- Header Container -->
+<div id="headerContainer">
+    <!-- Header will be loaded here -->
+    <div style="text-align: center; padding: 20px; background-color: #222831; color: white;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i>
+        <p>Loading header...</p>
+    </div>
+</div>
+
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+    <div class="container">
+        <ul class="breadcrumb-list">
+            <li class="breadcrumb-item">
+                <a href="../index.html" class="breadcrumb-link">Home</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="products.html" class="breadcrumb-link">Shop</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="products.html" class="breadcrumb-link" id="productCategory">Category</a>
+            </li>
+            <li class="breadcrumb-item">
+                <span class="breadcrumb-current" id="productName">Product Name</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Alerts -->
+    <div class="alert alert-success" id="alertSuccess"></div>
+    <div class="alert alert-error" id="alertError"></div>
+
+    <!-- Product Detail -->
+    <div class="product-detail" id="productDetail">
+        <!-- Product details will be loaded dynamically here -->
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    <!-- Recommended Products -->
+    <section class="recommended-products">
+        <h2 class="section-title">You May Also Like</h2>
+        <div class="product-grid" id="recommendedProducts">
+            <!-- Loading spinner -->
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Footer Section -->
+<footer>
+    <div class="container">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Shop</h3>
+                <ul class="footer-links">
+                    <li><a href="products.html">All Products</a></li>
+                    <li><a href="products.html?category=power-tools">Power Tools</a></li>
+                    <li><a href="products.html?category=hand-tools">Hand Tools</a></li>
+                    <li><a href="products.html?category=electrical">Electrical</a></li>
+                    <li><a href="products.html?category=plumbing">Plumbing</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Customer Service</h3>
+                <ul class="footer-links">
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="returns.html">Returns & Refunds</a></li>
+                    <li><a href="shipping.html">Shipping Policy</a></li>
+                    <li><a href="warranty.html">Warranty Information</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>My Account</h3>
+                <ul class="footer-links">
+                    <li><a href="account.html">Account Dashboard</a></li>
+                    <li><a href="orders.html">Order History</a></li>
+                    <li><a href="wishlist.html">Wish List</a></li>
+                    <li><a href="newsletter.html">Newsletter</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About Toolnest</h3>
+                <ul class="footer-links">
+                    <li><a href="about.html">Our Story</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="press.html">Press Releases</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Toolnest. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Product Detail JavaScript -->
+<script src="/js/ajax/product-detail.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Load the header
+        loadHeader();
+    });
+
+    /**
+     * Load the shared header component
+     */
+    function loadHeader() {
+        // Fetch the header HTML
+        $.ajax({
+            url: 'header.html',  // Path to your header.html file
+            method: 'GET',
+            success: function(data) {
+                // Insert the header HTML
+                $('#headerContainer').html(data);
+
+                // Initialize header functionality
+                // Wait a brief moment to ensure scripts are loaded
+                setTimeout(function() {
+                    if (typeof initHeader === 'function') {
+                        initHeader();
+                    } else {
+                        console.error('Header initialization function not found');
+                    }
+                }, 100);
+
+                // Highlight the current page in navigation
+                highlightCurrentPage();
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading header:', error);
+                $('#headerContainer').html(`
+                        <div style="background-color: #222831; color: white; padding: 15px 0; text-align: center;">
+                            <div class="container">
+                                <p>Unable to load header. Please refresh the page.</p>
+                                <a href="../index.html" style="color: #D65A31; text-decoration: none; font-weight: bold;">
+                                    Go to Homepage
+                                </a>
+                            </div>
+                        </div>
+                    `);
+            }
+        });
+    }
+
+    /**
+     * Highlight the current page in navigation
+     */
+    function highlightCurrentPage() {
+        // Get current page filename
+        const currentPage = window.location.pathname.split('/').pop().split('?')[0];
+
+        // Add active class to corresponding navigation link in both desktop and mobile views
+        $(`.nav-link[href="${currentPage}"]`).addClass('active');
+        $(`.dropdown-item[href="${currentPage}"]`).addClass('active');
+        $(`.mobile-menu a[href="${currentPage}"]`).addClass('active');
+    }
+</script>
+</body>
+</html>

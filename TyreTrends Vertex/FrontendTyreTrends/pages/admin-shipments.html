@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipments Management | TyreTrends Admin</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #222831;
+            --secondary: #D65A31;
+            --light-gray: #EEEEEE;
+            --dark-gray: #393E46;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --white: #ffffff;
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb span:not(:last-child)::after {
+            content: '/';
+            margin: 0 8px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--dark-gray);
+            margin-left: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            margin-left: 30px;
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 180px;
+            padding: 10px 0;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--light-gray);
+            margin: 8px 0;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--primary);
+            color: white;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            z-index: 99;
+        }
+
+        .sidebar-collapsed .sidebar {
+            left: calc(-1 * var(--sidebar-width));
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        .nav-icon {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+        }
+
+        .nav-badge {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .nav-menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px 20px 5px;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            flex: 1;
+            transition: margin-left 0.3s ease;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #bf4f2c;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--secondary);
+            border: 1px solid var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--light-gray);
+        }
+
+        /* Filter Controls */
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-label {
+            margin-right: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .filter-control {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        .filter-date-range {
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-date {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 130px;
+        }
+
+        .filter-separator {
+            margin: 0 8px;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            display: flex;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-btn {
+            padding: 8px 15px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        /* Shipments Table */
+        .shipments-table-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .shipments-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .shipments-table th,
+        .shipments-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .shipments-table th {
+            font-weight: 600;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .shipments-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .shipment-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .status-processing {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info);
+        }
+
+        .status-shipped {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-delivered {
+            background-color: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+
+        .status-canceled {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .customer-cell {
+            display: flex;
+            align-items: center;
+        }
+
+        .customer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+            color: var(--dark-gray);
+        }
+
+        .tracking-link {
+            color: var(--info);
+            text-decoration: none;
+        }
+
+        .tracking-link:hover {
+            text-decoration: underline;
+        }
+
+        .action-menu {
+            position: relative;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--dark-gray);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            margin: 0 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .pagination-btn.active {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: white;
+        }
+
+        .pagination-btn.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Shipment Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark-gray);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-section {
+            margin-bottom: 20px;
+        }
+
+        .modal-section-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .shipment-info-item {
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .address-box {
+            padding: 15px;
+            background-color: var(--light-gray);
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .items-table th,
+        .items-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .items-table th {
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .tracking-form {
+            margin-top: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .alert-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: calc(-1 * var(--sidebar-width));
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-item {
+                width: 100%;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .shipments-table th:nth-child(4),
+            .shipments-table td:nth-child(4) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .shipments-table th:nth-child(3),
+            .shipments-table td:nth-child(3) {
+                display: none;
+            }
+
+            .page-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <button class="menu-toggle">☰</button>
+        <a href="admin-dashboard.html" class="logo">Tyre<span>Trends</span> Admin</a>
+        <div class="breadcrumb">
+            <span>Dashboard</span>
+            <span>Shipments</span>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="header-actions">
+            <button class="action-btn">
+                📃
+                <span class="notification-badge">3</span>
+            </button>
+            <button class="action-btn">
+                🔔
+                <span class="notification-badge">5</span>
+            </button>
+            <button class="action-btn">⚙️</button>
+        </div>
+
+        <div class="user-dropdown">
+            <button class="user-btn" id="user-dropdown-toggle">
+                <div class="user-avatar">A</div>
+                <span class="user-name">Admin</span>
+                <span>▼</span>
+            </button>
+
+            <div class="dropdown-menu" id="user-dropdown-menu">
+                <a href="#" class="dropdown-item">My Profile</a>
+                <a href="#" class="dropdown-item">Account Settings</a>
+                <div class="dropdown-divider"></div>
+                <a href="admin-login.html" class="dropdown-item">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="admin-dashboard.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Catalog</div>
+
+        <li class="nav-item">
+            <a href="admin-products.html" class="nav-link">
+                <span class="nav-icon">🛞</span>
+                <span class="nav-text">Products</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Categories</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">🏷️</span>
+                <span class="nav-text">Brands</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Sales</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📝</span>
+                <span class="nav-text">Orders</span>
+                <span class="nav-badge">8</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-shipments.html" class="nav-link active">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Shipments</span>
+                <span class="nav-badge">12</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-returns.html" class="nav-link">
+                <span class="nav-icon">↩️</span>
+                <span class="nav-text">Returns</span>
+                <span class="nav-badge">3</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Customers</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">All Customers</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Reports</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Marketing</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">🏷️</span>
+                <span class="nav-text">Discounts</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📧</span>
+                <span class="nav-text">Email Campaigns</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Services</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">🔧</span>
+                <span class="nav-text">Service Bookings</span>
+                <span class="nav-badge">3</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Schedule</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">System</div>
+
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">Admin Users</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Settings</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-login.html" class="nav-link">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Alerts -->
+    <div class="alert alert-success" id="alertSuccess"></div>
+    <div class="alert alert-error" id="alertError"></div>
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <h1>Shipments Management</h1>
+        <a href="#" class="btn" id="createShipmentBtn">Create Shipment</a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-item">
+            <label class="filter-label">Status:</label>
+            <select class="filter-control" id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="PENDING">Pending</option>
+                <option value="PROCESSING">Processing</option>
+                <option value="SHIPPED">Shipped</option>
+                <option value="DELIVERED">Delivered</option>
+                <option value="CANCELED">Canceled</option>
+            </select>
+        </div>
+
+        <div class="filter-item">
+            <label class="filter-label">Date Range:</label>
+            <div class="filter-date-range">
+                <input type="date" class="filter-date" id="startDate">
+                <span class="filter-separator">-</span>
+                <input type="date" class="filter-date" id="endDate">
+            </div>
+        </div>
+
+        <div class="filter-item">
+            <label class="filter-label">Carrier:</label>
+            <select class="filter-control" id="carrierFilter">
+                <option value="">All Carriers</option>
+                <option value="fedex">FedEx</option>
+                <option value="ups">UPS</option>
+                <option value="usps">USPS</option>
+                <option value="dhl">DHL</option>
+            </select>
+        </div>
+
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search order #, tracking #, or customer name...">
+            <button class="search-btn" id="searchBtn">Search</button>
+        </div>
+    </div>
+
+    <!-- Shipments Table -->
+    <div class="shipments-table-card">
+        <table class="shipments-table">
+            <thead>
+            <tr>
+                <th>Shipment ID</th>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Tracking</th>
+                <th>Carrier</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="shipmentsTableBody">
+            <!-- Shipments will be loaded here dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="shipmentsPagination">
+        <!-- Pagination will be generated here -->
+    </div>
+</div>
+
+<!-- Shipment Detail Modal -->
+<div class="modal-overlay" id="shipmentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Shipment Details</h2>
+            <button class="modal-close" id="closeShipmentModal">&times;</button>
+        </div>
+        <div class="modal-body" id="shipmentModalBody">
+            <!-- Modal content will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<!-- Create Shipment Modal -->
+<div class="modal-overlay" id="createShipmentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title">Create New Shipment</h2>
+            <button class="modal-close" id="closeCreateShipmentModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="createShipmentForm">
+                <div class="modal-section">
+                    <h3 class="modal-section-title">Order Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Order Number</label>
+                            <select class="form-control" id="orderSelect" required>
+                                <option value="">Select an order</option>
+                                <!-- Orders will be loaded here -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3 class="modal-section-title">Shipping Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Carrier</label>
+                            <select class="form-control" id="carrierSelect" required>
+                                <option value="">Select a carrier</option>
+                                <option value="fedex">FedEx</option>
+                                <option value="ups">UPS</option>
+                                <option value="usps">USPS</option>
+                                <option value="dhl">DHL</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Shipping Method</label>
+                            <select class="form-control" id="shippingMethodSelect" required>
+                                <option value="">Select a shipping method</option>
+                                <option value="standard">Standard</option>
+                                <option value="express">Express</option>
+                                <option value="overnight">Overnight</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tracking Number</label>
+                            <input type="text" class="form-control" id="trackingNumber">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Estimated Delivery Date</label>
+                            <input type="date" class="form-control" id="estimatedDeliveryDate">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="cancelCreateShipment">Cancel</button>
+            <button class="btn" id="saveShipment">Create Shipment</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // State management
+    let shipments = [];
+    let currentPage = 0;
+    let totalPages = 0;
+    let selectedShipment = null;
+
+    // Initial setup
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle User Dropdown
+        setupUserDropdown();
+
+        // Toggle Mobile Sidebar
+        setupMobileSidebar();
+
+        // Load shipments
+        loadShipments();
+
+        // Setup filter events
+        setupFilters();
+
+        // Setup modal events
+        setupModals();
+    });
+
+    // Setup user dropdown functionality
+    function setupUserDropdown() {
+        const userDropdownToggle = document.getElementById('user-dropdown-toggle');
+        const userDropdownMenu = document.getElementById('user-dropdown-menu');
+
+        userDropdownToggle.addEventListener('click', function() {
+            userDropdownMenu.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!userDropdownToggle.contains(e.target) && !userDropdownMenu.contains(e.target)) {
+                userDropdownMenu.classList.remove('active');
+            }
+        });
+    }
+
+    // Setup mobile sidebar functionality
+    function setupMobileSidebar() {
+        const menuToggle = document.querySelector('.menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+    }
+
+    // Setup filter events
+    function setupFilters() {
+        const statusFilter = document.getElementById('statusFilter');
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const carrierFilter = document.getElementById('carrierFilter');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+
+        // Apply filters when changed
+        statusFilter.addEventListener('change', applyFilters);
+        startDateInput.addEventListener('change', applyFilters);
+        endDateInput.addEventListener('change', applyFilters);
+        carrierFilter.addEventListener('change', applyFilters);
+
+        // Search button click
+        searchBtn.addEventListener('click', applyFilters);
+
+        // Enter key in search input
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                applyFilters();
+            }
+        });
+
+        // Set default date range (last 30 days)
+        const today = new Date();
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(today.getDate() - 30);
+
+        endDateInput.valueAsDate = today;
+        startDateInput.valueAsDate = thirtyDaysAgo;
+    }
+
+    // Setup modal events
+    function setupModals() {
+        // Shipment detail modal
+        const shipmentModal = document.getElementById('shipmentModal');
+        const closeShipmentModal = document.getElementById('closeShipmentModal');
+
+        closeShipmentModal.addEventListener('click', function() {
+            shipmentModal.classList.remove('show');
+        });
+
+        // Create shipment modal
+        const createShipmentBtn = document.getElementById('createShipmentBtn');
+        const createShipmentModal = document.getElementById('createShipmentModal');
+        const closeCreateShipmentModal = document.getElementById('closeCreateShipmentModal');
+        const cancelCreateShipment = document.getElementById('cancelCreateShipment');
+        const saveShipment = document.getElementById('saveShipment');
+
+        createShipmentBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Load unshipped orders
+            loadUnshippedOrders();
+            // Show modal
+            createShipmentModal.classList.add('show');
+        });
+
+        closeCreateShipmentModal.addEventListener('click', function() {
+            createShipmentModal.classList.remove('show');
+        });
+
+        cancelCreateShipment.addEventListener('click', function() {
+            createShipmentModal.classList.remove('show');
+        });
+
+        saveShipment.addEventListener('click', createNewShipment);
+
+        // Close modals when clicking outside
+        shipmentModal.addEventListener('click', function(e) {
+            if (e.target === shipmentModal) {
+                shipmentModal.classList.remove('show');
+            }
+        });
+
+        createShipmentModal.addEventListener('click', function(e) {
+            if (e.target === createShipmentModal) {
+                createShipmentModal.classList.remove('show');
+            }
+        });
+    }
+
+    // Load shipments with filters
+    function loadShipments() {
+        // Show loading state
+        document.getElementById('shipmentsTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center;">Loading shipments...</td></tr>';
+
+        // Get filter values
+        const status = document.getElementById('statusFilter').value;
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        const carrier = document.getElementById('carrierFilter').value;
+        const search = document.getElementById('searchInput').value.trim();
+
+        // Prepare API parameters
+        const params = {
+            page: currentPage,
+            size: 10
+        };
+
+        if (status) params.status = status;
+        if (startDate) params.startDate = startDate;
+        if (endDate) params.endDate = endDate;
+        if (carrier) params.carrier = carrier;
+        if (search) params.search = search;
+
+        // In a real application, you would make an API call here
+        // For this demo, we'll simulate an API response
+        simulateShipmentsApi(params)
+            .then(response => {
+                // Update state
+                shipments = response.content;
+                currentPage = response.pageable.pageNumber;
+                totalPages = response.totalPages;
+
+                // Render shipments
+                renderShipments(shipments);
+
+                // Update pagination
+                renderPagination();
+            })
+            .catch(error => {
+                console.error('Error loading shipments:', error);
+                document.getElementById('shipmentsTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center;">Error loading shipments. Please try again.</td></tr>';
+                showAlert('error', 'Failed to load shipments. Please try again.');
+            });
+    }
+
+    // Render shipments in the table
+    function renderShipments(shipments) {
+        const tableBody = document.getElementById('shipmentsTableBody');
+
+        // Clear table
+        tableBody.innerHTML = '';
+
+        // If no shipments, show message
+        if (shipments.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">No shipments found.</td></tr>';
+            return;
+        }
+
+        // Render each shipment
+        shipments.forEach(shipment => {
+            const row = document.createElement('tr');
+
+            // Format date
+            const shipmentDate = new Date(shipment.createdAt);
+            const formattedDate = shipmentDate.toLocaleDateString();
+
+            // Get status class
+            const statusClass = getStatusClass(shipment.status);
+
+            // Render tracking info
+            let trackingInfo = 'Not available';
+            if (shipment.trackingNumber) {
+                const trackingUrl = getTrackingUrl(shipment.carrier, shipment.trackingNumber);
+                trackingInfo = `<a href="${trackingUrl}" class="tracking-link" target="_blank">${shipment.trackingNumber}</a>`;
+            }
+
+            row.innerHTML = `
+                <td>${shipment.id}</td>
+                <td>${shipment.orderNumber}</td>
+                <td>
+                    <div class="customer-cell">
+                        <div class="customer-avatar">${getInitials(shipment.customerName)}</div>
+                        <span>${shipment.customerName}</span>
+                    </div>
+                </td>
+                <td>${formattedDate}</td>
+                <td>${trackingInfo}</td>
+                <td>${formatCarrier(shipment.carrier)}</td>
+                <td><span class="shipment-badge ${statusClass}">${formatStatus(shipment.status)}</span></td>
+                <td>
+                    <button class="btn btn-sm view-shipment-btn" data-id="${shipment.id}">View</button>
+                    ${shipment.status === 'PENDING' ? `<button class="btn btn-sm btn-outline cancel-shipment-btn" data-id="${shipment.id}">Cancel</button>` : ''}
+                </td>
+            `;
+
+            // Add event listeners
+            const viewBtn = row.querySelector('.view-shipment-btn');
+            if (viewBtn) {
+                viewBtn.addEventListener('click', function() {
+                    const shipmentId = this.getAttribute('data-id');
+                    viewShipmentDetails(shipmentId);
+                });
+            }
+
+            const cancelBtn = row.querySelector('.cancel-shipment-btn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function() {
+                    const shipmentId = this.getAttribute('data-id');
+                    cancelShipment(shipmentId);
+                });
+            }
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Render pagination controls
+    function renderPagination() {
+        const paginationContainer = document.getElementById('shipmentsPagination');
+
+        // Clear container
+        paginationContainer.innerHTML = '';
+
+        // If no pages or only one page, hide pagination
+        if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        // Show pagination
+        paginationContainer.style.display = 'flex';
+
+        // Previous button
+        const prevBtn = document.createElement('a');
+        prevBtn.href = '#';
+        prevBtn.className = `pagination-btn ${currentPage === 0 ? 'disabled' : ''}`;
+        prevBtn.innerHTML = '&laquo;';
+
+        if (currentPage > 0) {
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage--;
+                loadShipments();
+            });
+        }
+
+        paginationContainer.appendChild(prevBtn);
+
+        // Page numbers
+        const maxPages = 5;
+        let startPage = Math.max(0, currentPage - Math.floor(maxPages / 2));
+        let endPage = Math.min(totalPages - 1, startPage + maxPages - 1);
+
+        // Adjust start page if necessary
+        if (endPage - startPage + 1 < maxPages) {
+            startPage = Math.max(0, endPage - maxPages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('a');
+            pageBtn.href = '#';
+            pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+            pageBtn.textContent = i + 1;
+
+            if (i !== currentPage) {
+                pageBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    currentPage = i;
+                    loadShipments();
+                });
+            }
+
+            paginationContainer.appendChild(pageBtn);
+        }
+
+        // Next button
+        const nextBtn = document.createElement('a');
+        nextBtn.href = '#';
+        nextBtn.className = `pagination-btn ${currentPage === totalPages - 1 ? 'disabled' : ''}`;
+        nextBtn.innerHTML = '&raquo;';
+
+        if (currentPage < totalPages - 1) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentPage++;
+                loadShipments();
+            });
+        }
+
+        paginationContainer.appendChild(nextBtn);
+    }
+
+    // Apply filters and reload shipments
+    function applyFilters() {
+        // Reset to first page
+        currentPage = 0;
+        // Load shipments with new filters
+        loadShipments();
+    }
+
+    // View shipment details
+    function viewShipmentDetails(shipmentId) {
+        // Find shipment
+        const shipment = shipments.find(s => s.id === parseInt(shipmentId));
+
+        if (!shipment) {
+            showAlert('error', 'Shipment not found.');
+            return;
+        }
+
+        // Store selected shipment
+        selectedShipment = shipment;
+
+        // Format date
+        const createdDate = new Date(shipment.createdAt);
+        const formattedCreatedDate = createdDate.toLocaleDateString();
+
+        // Format estimated delivery date if exists
+        let formattedEstimatedDelivery = 'Not specified';
+        if (shipment.estimatedDelivery) {
+            const estimatedDate = new Date(shipment.estimatedDelivery);
+            formattedEstimatedDelivery = estimatedDate.toLocaleDateString();
+        }
+
+        // Render items
+        let itemsHtml = '';
+        if (shipment.items && shipment.items.length > 0) {
+            itemsHtml = `
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            shipment.items.forEach(item => {
+                itemsHtml += `
+                    <tr>
+                        <td>${item.productName}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            itemsHtml += `
+                    </tbody>
+                </table>
+            `;
+        } else {
+            itemsHtml = '<p>No items in this shipment.</p>';
+        }
+
+        // Render tracking form (for non-delivered shipments)
+        let trackingFormHtml = '';
+        if (shipment.status !== 'DELIVERED' && shipment.status !== 'CANCELED') {
+            trackingFormHtml = `
+                <div class="tracking-form">
+                    <h4>Update Tracking</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tracking Number</label>
+                            <input type="text" class="form-control" id="updateTrackingNumber" value="${shipment.trackingNumber || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <select class="form-control" id="updateStatus">
+                                <option value="PENDING" ${shipment.status === 'PENDING' ? 'selected' : ''}>Pending</option>
+                                <option value="PROCESSING" ${shipment.status === 'PROCESSING' ? 'selected' : ''}>Processing</option>
+                                <option value="SHIPPED" ${shipment.status === 'SHIPPED' ? 'selected' : ''}>Shipped</option>
+                                <option value="DELIVERED" ${shipment.status === 'DELIVERED' ? 'selected' : ''}>Delivered</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Estimated Delivery</label>
+                            <input type="date" class="form-control" id="updateEstimatedDelivery" value="${shipment.estimatedDelivery || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Carrier</label>
+                            <select class="form-control" id="updateCarrier">
+                                <option value="fedex" ${shipment.carrier === 'fedex' ? 'selected' : ''}>FedEx</option>
+                                <option value="ups" ${shipment.carrier === 'ups' ? 'selected' : ''}>UPS</option>
+                                <option value="usps" ${shipment.carrier === 'usps' ? 'selected' : ''}>USPS</option>
+                                <option value="dhl" ${shipment.carrier === 'dhl' ? 'selected' : ''}>DHL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" id="saveTrackingBtn">Save Changes</button>
+                </div>
+            `;
+        }
+
+        // Populate modal content
+        document.getElementById('shipmentModalBody').innerHTML = `
+            <div class="modal-section">
+                <h3 class="modal-section-title">Shipment Information</h3>
+                <div class="two-columns">
+                    <div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Shipment ID:</div>
+                            <div>${shipment.id}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Order Number:</div>
+                            <div>${shipment.orderNumber}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Date Created:</div>
+                            <div>${formattedCreatedDate}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Status:</div>
+                            <div><span class="shipment-badge ${getStatusClass(shipment.status)}">${formatStatus(shipment.status)}</span></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Carrier:</div>
+                            <div>${formatCarrier(shipment.carrier)}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Tracking Number:</div>
+                            <div>${shipment.trackingNumber ? `<a href="${getTrackingUrl(shipment.carrier, shipment.trackingNumber)}" class="tracking-link" target="_blank">${shipment.trackingNumber}</a>` : 'Not available'}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Shipping Method:</div>
+                            <div>${formatShippingMethod(shipment.shippingMethod)}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Estimated Delivery:</div>
+                            <div>${formattedEstimatedDelivery}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3 class="modal-section-title">Customer Information</h3>
+                <div class="two-columns">
+                    <div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Customer:</div>
+                            <div>${shipment.customerName}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Email:</div>
+                            <div>${shipment.customerEmail}</div>
+                        </div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Phone:</div>
+                            <div>${shipment.customerPhone || 'Not provided'}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="shipment-info-item">
+                            <div class="info-label">Shipping Address:</div>
+                            <div class="address-box">
+                                ${shipment.shippingAddress.name}<br>
+                                ${shipment.shippingAddress.street1}<br>
+                                ${shipment.shippingAddress.street2 ? shipment.shippingAddress.street2 + '<br>' : ''}
+                                ${shipment.shippingAddress.city}, ${shipment.shippingAddress.state} ${shipment.shippingAddress.zip}<br>
+                                ${shipment.shippingAddress.country}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <h3 class="modal-section-title">Items</h3>
+                ${itemsHtml}
+            </div>
+
+            ${trackingFormHtml}
+        `;
+
+        // Setup save tracking button if exists
+        const saveTrackingBtn = document.getElementById('saveTrackingBtn');
+        if (saveTrackingBtn) {
+            saveTrackingBtn.addEventListener('click', updateShipmentTracking);
+        }
+
+        // Show modal
+        document.getElementById('shipmentModal').classList.add('show');
+    }
+
+    // Update shipment tracking information
+    function updateShipmentTracking() {
+        // Validate that we have a selected shipment
+        if (!selectedShipment) {
+            showAlert('error', 'No shipment selected.');
+            return;
+        }
+
+        // Get form values
+        const trackingNumber = document.getElementById('updateTrackingNumber').value.trim();
+        const status = document.getElementById('updateStatus').value;
+        const estimatedDelivery = document.getElementById('updateEstimatedDelivery').value;
+        const carrier = document.getElementById('updateCarrier').value;
+
+        // Prepare update data
+        const updateData = {
+            id: selectedShipment.id,
+            trackingNumber: trackingNumber,
+            status: status,
+            estimatedDelivery: estimatedDelivery,
+            carrier: carrier
+        };
+
+        // In a real application, you would make an API call here
+        // For this demo, we'll simulate an API response
+        simulateUpdateShipmentApi(updateData)
+            .then(updatedShipment => {
+                // Update the shipment in the list
+                const index = shipments.findIndex(s => s.id === updatedShipment.id);
+                if (index !== -1) {
+                    shipments[index] = updatedShipment;
+                }
+
+                // Re-render shipments
+                renderShipments(shipments);
+
+                // Close modal
+                document.getElementById('shipmentModal').classList.remove('show');
+
+                // Show success message
+                showAlert('success', 'Shipment updated successfully.');
+            })
+            .catch(error => {
+                console.error('Error updating shipment:', error);
+                showAlert('error', 'Failed to update shipment. Please try again.');
+            });
+    }
+
+    // Cancel a shipment
+    function cancelShipment(shipmentId) {
+        // Confirm cancellation
+        if (!confirm('Are you sure you want to cancel this shipment?')) {
+            return;
+        }
+
+        // In a real application, you would make an API call here
+        // For this demo, we'll simulate an API response
+        simulateCancelShipmentApi(shipmentId)
+            .then(canceledShipment => {
+                // Update the shipment in the list
+                const index = shipments.findIndex(s => s.id === parseInt(shipmentId));
+                if (index !== -1) {
+                    shipments[index] = canceledShipment;
+                }
+
+                // Re-render shipments
+                renderShipments(shipments);
+
+                // Show success message
+                showAlert('success', 'Shipment canceled successfully.');
+            })
+            .catch(error => {
+                console.error('Error canceling shipment:', error);
+                showAlert('error', 'Failed to cancel shipment. Please try again.');
+            });
+    }
+
+    // Load unshipped orders for creating new shipments
+    function loadUnshippedOrders() {
+        const orderSelect = document.getElementById('orderSelect');
+
+        // Clear existing options except placeholder
+        while (orderSelect.options.length > 1) {
+            orderSelect.remove(1);
+        }
+
+        // In a real application, you would make an API call here
+        // For this demo, we'll simulate an API response
+        simulateUnshippedOrdersApi()
+            .then(orders => {
+                // Add orders to select
+                orders.forEach(order => {
+                    const option = document.createElement('option');
+                    option.value = order.id;
+                    option.textContent = `${order.orderNumber} - ${order.customerName} - $${order.total.toFixed(2)}`;
+                    orderSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading unshipped orders:', error);
+                showAlert('error', 'Failed to load unshipped orders. Please try again.');
+            });
+    }
+
+    // Create a new shipment
+    function createNewShipment() {
+        // Get form values
+        const orderSelect = document.getElementById('orderSelect');
+        const carrierSelect = document.getElementById('carrierSelect');
+        const shippingMethodSelect = document.getElementById('shippingMethodSelect');
+        const trackingNumberInput = document.getElementById('trackingNumber');
+        const estimatedDeliveryDateInput = document.getElementById('estimatedDeliveryDate');
+
+        // Validate required fields
+        if (!orderSelect.value) {
+            alert('Please select an order.');
+            return;
+        }
+
+        if (!carrierSelect.value) {
+            alert('Please select a carrier.');
+            return;
+        }
+
+        if (!shippingMethodSelect.value) {
+            alert('Please select a shipping method.');
+            return;
+        }
+
+        // Prepare shipment data
+        const shipmentData = {
+            orderId: orderSelect.value,
+            carrier: carrierSelect.value,
+            shippingMethod: shippingMethodSelect.value,
+            trackingNumber: trackingNumberInput.value.trim(),
+            estimatedDeliveryDate: estimatedDeliveryDateInput.value
+        };
+
+        // In a real application, you would make an API call here
+        // For this demo, we'll simulate an API response
+        simulateCreateShipmentApi(shipmentData)
+            .then(newShipment => {
+                // Close modal
+                document.getElementById('createShipmentModal').classList.remove('show');
+
+                // Reset form
+                document.getElementById('createShipmentForm').reset();
+
+                // Reload shipments
+                loadShipments();
+
+                // Show success message
+                showAlert('success', 'Shipment created successfully.');
+            })
+            .catch(error => {
+                console.error('Error creating shipment:', error);
+                showAlert('error', 'Failed to create shipment. Please try again.');
+            });
+    }
+
+    // Helper Functions
+
+    // Get status class for styling
+    function getStatusClass(status) {
+        if (!status) return '';
+
+        switch (status.toUpperCase()) {
+            case 'PENDING':
+                return 'status-pending';
+            case 'PROCESSING':
+                return 'status-processing';
+            case 'SHIPPED':
+                return 'status-shipped';
+            case 'DELIVERED':
+                return 'status-delivered';
+            case 'CANCELED':
+                return 'status-canceled';
+            default:
+                return '';
+        }
+    }
+
+    // Format status text
+    function formatStatus(status) {
+        if (!status) return 'Unknown';
+
+        // Convert PENDING to Pending, etc.
+        return status.charAt(0) + status.slice(1).toLowerCase();
+    }
+
+    // Format carrier name
+    function formatCarrier(carrier) {
+        if (!carrier) return 'Unknown';
+
+        switch (carrier.toLowerCase()) {
+            case 'fedex':
+                return 'FedEx';
+            case 'ups':
+                return 'UPS';
+            case 'usps':
+                return 'USPS';
+            case 'dhl':
+                return 'DHL';
+            default:
+                return carrier;
+        }
+    }
+
+    // Format shipping method
+    function formatShippingMethod(method) {
+        if (!method) return 'Standard';
+
+        switch (method.toLowerCase()) {
+            case 'standard':
+                return 'Standard';
+            case 'express':
+                return 'Express';
+            case 'overnight':
+                return 'Overnight';
+            default:
+                return method;
+        }
+    }
+
+    // Get tracking URL based on carrier and tracking number
+    function getTrackingUrl(carrier, trackingNumber) {
+        if (!carrier || !trackingNumber) return '#';
+
+        switch (carrier.toLowerCase()) {
+            case 'fedex':
+                return `https://www.fedex.com/fedextrack/?trknbr=${trackingNumber}`;
+            case 'ups':
+                return `https://www.ups.com/track?tracknum=${trackingNumber}`;
+            case 'usps':
+                return `https://tools.usps.com/go/TrackConfirmAction?tLabels=${trackingNumber}`;
+            case 'dhl':
+                return `https://www.dhl.com/en/express/tracking.html?AWB=${trackingNumber}`;
+            default:
+                return '#';
+        }
+    }
+
+    // Get initials from name
+    function getInitials(name) {
+        if (!name) return 'NA';
+
+        const nameParts = name.split(' ');
+        if (nameParts.length === 1) {
+            return nameParts[0].charAt(0).toUpperCase();
+        }
+
+        return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+    }
+
+    // Show alert message
+    function showAlert(type, message) {
+        const alertElement = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}`);
+
+        if (alertElement) {
+            alertElement.textContent = message;
+            alertElement.classList.add('show');
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.remove('show');
+            }, 5000);
+        }
+    }
+
+    // API Simulation Functions (replace with real API calls in production)
+
+    // Simulate fetching shipments
+    function simulateShipmentsApi(params) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Generate mock data
+                const mockShipments = [];
+                const totalItems = 45; // Total number of items across all pages
+                const itemsPerPage = 10;
+                const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+                // Apply status filter
+                let filteredItems = [...Array(totalItems)].map((_, i) => {
+                    const id = i + 1;
+                    const statuses = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELED'];
+                    const carriers = ['fedex', 'ups', 'usps', 'dhl'];
+                    const shippingMethods = ['standard', 'express', 'overnight'];
+
+                    // Determine status based on ID to ensure consistency
+                    let status;
+                    if (id % 10 === 0) {
+                        status = 'CANCELED';
+                    } else if (id % 7 === 0) {
+                        status = 'DELIVERED';
+                    } else if (id % 5 === 0) {
+                        status = 'SHIPPED';
+                    } else if (id % 3 === 0) {
+                        status = 'PROCESSING';
+                    } else {
+                        status = 'PENDING';
+                    }
+
+                    // Create a date between 30 days ago and today
+                    const today = new Date();
+                    const thirtyDaysAgo = new Date();
+                    thirtyDaysAgo.setDate(today.getDate() - 30);
+                    const randomDate = new Date(thirtyDaysAgo.getTime() + Math.random() * (today.getTime() - thirtyDaysAgo.getTime()));
+
+                    return {
+                        id,
+                        orderNumber: `ORD-${100000 + id}`,
+                        customerName: `Customer ${id}`,
+                        customerEmail: `customer${id}@example.com`,
+                        customerPhone: `555-${String(100 + id).padStart(3, '0')}-${String(1000 + id).padStart(4, '0')}`,
+                        createdAt: randomDate.toISOString(),
+                        status,
+                        carrier: carriers[id % carriers.length],
+                        trackingNumber: status !== 'PENDING' ? `TRK${id}${id}${id}${id}` : '',
+                        shippingMethod: shippingMethods[id % shippingMethods.length],
+                        estimatedDelivery: status === 'PENDING' ? null : new Date(randomDate.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+                        shippingAddress: {
+                            name: `Customer ${id}`,
+                            street1: `${1000 + id} Main St`,
+                            street2: id % 3 === 0 ? `Apt ${id}` : '',
+                            city: 'Springfield',
+                            state: 'IL',
+                            zip: `6${String(1000 + id).padStart(4, '0')}`,
+                            country: 'USA'
+                        },
+                        items: [
+                            {
+                                id: id * 10 + 1,
+                                productName: 'Premium All-Season Tyre',
+                                quantity: 2,
+                                price: 129.99
+                            },
+                            {
+                                id: id * 10 + 2,
+                                productName: 'Wheel Installation Kit',
+                                quantity: 1,
+                                price: 49.99
+                            }
+                        ]
+                    };
+                });
+
+                // Apply filters
+                if (params.status) {
+                    filteredItems = filteredItems.filter(item => item.status === params.status);
+                }
+
+                if (params.startDate && params.endDate) {
+                    const startDate = new Date(params.startDate);
+                    const endDate = new Date(params.endDate);
+                    // Set endDate to end of day
+                    endDate.setHours(23, 59, 59, 999);
+
+                    filteredItems = filteredItems.filter(item => {
+                        const itemDate = new Date(item.createdAt);
+                        return itemDate >= startDate && itemDate <= endDate;
+                    });
+                }
+
+                if (params.carrier) {
+                    filteredItems = filteredItems.filter(item => item.carrier === params.carrier);
+                }
+
+                if (params.search) {
+                    const searchLower = params.search.toLowerCase();
+                    filteredItems = filteredItems.filter(item =>
+                        item.orderNumber.toLowerCase().includes(searchLower) ||
+                        (item.trackingNumber && item.trackingNumber.toLowerCase().includes(searchLower)) ||
+                        item.customerName.toLowerCase().includes(searchLower)
+                    );
+                }
+
+                // Calculate pagination
+                const filteredTotal = filteredItems.length;
+                const filteredTotalPages = Math.ceil(filteredTotal / itemsPerPage);
+                const page = params.page || 0;
+                const size = params.size || 10;
+
+                // Get items for current page
+                const startIndex = page * size;
+                const endIndex = Math.min(startIndex + size, filteredTotal);
+                const pageItems = filteredItems.slice(startIndex, endIndex);
+
+                // Create response
+                const response = {
+                    content: pageItems,
+                    pageable: {
+                        pageNumber: page,
+                        pageSize: size
+                    },
+                    totalPages: filteredTotalPages,
+                    totalElements: filteredTotal,
+                    numberOfElements: pageItems.length
+                };
+
+                resolve(response);
+            }, 500); // Simulate API delay
+        });
+    }
+
+    // Simulate fetching unshipped orders
+    function simulateUnshippedOrdersApi() {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Generate mock data
+                const mockOrders = [];
+
+                for (let i = 1; i <= 10; i++) {
+                    mockOrders.push({
+                        id: i,
+                        orderNumber: `ORD-${100000 + i}`,
+                        customerName: `Customer ${i}`,
+                        total: 100 + (i * 10),
+                        status: 'PAID',
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                resolve(mockOrders);
+            }, 300); // Simulate API delay
+        });
+    }
+
+    // Simulate creating a new shipment
+    function simulateCreateShipmentApi(shipmentData) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Generate mock response
+                const newShipment = {
+                    id: Math.floor(Math.random() * 1000) + 100,
+                    orderNumber: `ORD-${100000 + parseInt(shipmentData.orderId)}`,
+                    customerName: 'New Customer',
+                    customerEmail: 'newcustomer@example.com',
+                    createdAt: new Date().toISOString(),
+                    status: 'PROCESSING',
+                    carrier: shipmentData.carrier,
+                    trackingNumber: shipmentData.trackingNumber,
+                    shippingMethod: shipmentData.shippingMethod,
+                    estimatedDeliveryDate: shipmentData.estimatedDeliveryDate,
+                    shippingAddress: {
+                        name: 'New Customer',
+                        street1: '123 New Street',
+                        street2: '',
+                        city: 'New City',
+                        state: 'NC',
+                        zip: '12345',
+                        country: 'USA'
+                    },
+                    items: [
+                        {
+                            id: 101,
+                            productName: 'Premium All-Season Tyre',
+                            quantity: 2,
+                            price: 129.99
+                        }
+                    ]
+                };
+
+                resolve(newShipment);
+            }, 700); // Simulate API delay
+        });
+    }
+
+    // Simulate updating a shipment
+    function simulateUpdateShipmentApi(updateData) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Find shipment to update
+                const shipment = shipments.find(s => s.id === updateData.id);
+
+                if (!shipment) {
+                    throw new Error('Shipment not found');
+                }
+
+                // Update shipment
+                const updatedShipment = {
+                    ...shipment,
+                    trackingNumber: updateData.trackingNumber,
+                    status: updateData.status,
+                    estimatedDelivery: updateData.estimatedDelivery,
+                    carrier: updateData.carrier
+                };
+
+                resolve(updatedShipment);
+            }, 500); // Simulate API delay
+        });
+    }
+
+    // Simulate canceling a shipment
+    function simulateCancelShipmentApi(shipmentId) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // Find shipment to cancel
+                const shipment = shipments.find(s => s.id === parseInt(shipmentId));
+
+                if (!shipment) {
+                    throw new Error('Shipment not found');
+                }
+
+                // Cancel shipment
+                const canceledShipment = {
+                    ...shipment,
+                    status: 'CANCELED'
+                };
+
+                resolve(canceledShipment);
+            }, 500); // Simulate API delay
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | TyreTrends Admin</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #2A3F54;
+            --secondary: #E74C3C;
+            --light-gray: #EEEEEE;
+            --dark-gray: #ff0c0c;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+            --white: #ffffff;
+            --sidebar-width: 250px;
+            --header-height: 60px;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--white);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 0 20px;
+            height: var(--header-height);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb span:not(:last-child)::after {
+            content: '/';
+            margin: 0 8px;
+            color: var(--dark-gray);
+        }
+
+        .breadcrumb span:last-child {
+            color: var(--secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--dark-gray);
+            margin-left: 20px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            margin-left: 30px;
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 180px;
+            padding: 10px 0;
+            display: none;
+            z-index: 10;
+        }
+
+        .dropdown-menu.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 20px;
+            display: block;
+            color: var(--primary);
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: var(--light-gray);
+            margin: 8px 0;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--primary);
+            color: white;
+            width: var(--sidebar-width);
+            height: calc(100vh - var(--header-height));
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            z-index: 99;
+        }
+
+        .sidebar-collapsed .sidebar {
+            left: calc(-1 * var(--sidebar-width));
+        }
+
+        .sidebar-collapsed .main-content {
+            margin-left: 0;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+
+        .nav-icon {
+            margin-right: 15px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+        }
+
+        .nav-badge {
+            background-color: var(--secondary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .nav-menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 15px 20px 5px;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 30px;
+            flex: 1;
+            transition: margin-left 0.3s ease;
+        }
+
+        .page-title {
+            margin-bottom: 30px;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stats-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .stats-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 20px;
+        }
+
+        .stats-icon.sales {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .stats-icon.orders {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .stats-icon.customers {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .stats-icon.revenue {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .stats-info {
+            flex: 1;
+        }
+
+        .stats-title {
+            font-size: 14px;
+            color: var(--dark-gray);
+            margin-bottom: 5px;
+        }
+
+        .stats-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stats-change {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .stats-change.positive {
+            color: var(--success);
+        }
+
+        .stats-change.negative {
+            color: var(--danger);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-period {
+            display: flex;
+        }
+
+        .period-btn {
+            background-color: var(--light-gray);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .period-btn.active {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            position: relative;
+        }
+
+        /* Recent Orders Table */
+        .orders-table-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .orders-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .view-all {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .orders-table th {
+            font-weight: 600;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .customer-cell {
+            display: flex;
+            align-items: center;
+        }
+
+        .customer-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 10px;
+            color: var(--dark-gray);
+        }
+
+        .order-status {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .status-completed {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-processing {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .status-shipped {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info);
+        }
+
+        .action-menu {
+            position: relative;
+        }
+
+        .action-dropdown {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--dark-gray);
+        }
+
+        .action-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            min-width: 150px;
+            padding: 10px 0;
+            display: none;
+            z-index: 10;
+        }
+
+        .action-dropdown-menu.active {
+            display: block;
+        }
+
+        .action-dropdown-item {
+            padding: 8px 15px;
+            color: var(--primary);
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-dropdown-item:hover {
+            background-color: var(--light-gray);
+        }
+
+        /* Two-Column Section */
+        .two-column-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .inventory-card,
+        .recent-activity-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            height: 100%;
+        }
+
+        .inventory-header,
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .inventory-title,
+        .activity-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .inventory-list {
+            list-style: none;
+        }
+
+        .inventory-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .inventory-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+
+        .product-stock {
+            text-align: right;
+        }
+
+        .stock-level {
+            font-weight: 600;
+        }
+
+        .stock-level.low {
+            color: var(--danger);
+        }
+
+        .stock-level.medium {
+            color: var(--warning);
+        }
+
+        .stock-level.high {
+            color: var(--success);
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.order {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .activity-icon.user {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+        }
+
+        .activity-icon.product {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+        }
+
+        .activity-icon.system {
+            background-color: rgba(108, 117, 125, 0.1);
+            color: #6c757d;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            margin-bottom: 5px;
+        }
+
+        .activity-text strong {
+            font-weight: 600;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .alert-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .alert-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        /* Loading Spinner */
+        .spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .two-column-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: calc(-1 * var(--sidebar-width));
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .header-actions .action-btn {
+                margin-left: 15px;
+            }
+
+            .user-dropdown {
+                margin-left: 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .orders-table th:nth-child(2),
+            .orders-table td:nth-child(2) {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .orders-table th:nth-child(3),
+            .orders-table td:nth-child(3) {
+                display: none;
+            }
+
+            .breadcrumb {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <a href="admin-dashboard.html" class="logo">Tool<span>nest</span> Admin</a>
+        <div class="breadcrumb">
+            <span>Dashboard</span>
+        </div>
+    </div>
+
+    <div class="header-right">
+        <div class="header-actions">
+            <button class="action-btn" id="notificationsBtn">
+                🔔
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </button>
+            <button class="action-btn" id="settingsBtn">⚙️</button>
+        </div>
+
+        <div class="user-dropdown">
+            <button class="user-btn" id="userDropdownToggle">
+                <div class="user-avatar" id="userAvatar">A</div>
+                <span class="user-name" id="userName">Admin</span>
+                <span>▼</span>
+            </button>
+
+            <div class="dropdown-menu" id="userDropdownMenu">
+                <a href="#" class="dropdown-item">My Profile</a>
+                <a href="#" class="dropdown-item">Account Settings</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item" id="logoutBtn">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="admin-dashboard.html" class="nav-link active">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Catalog</div>
+
+        <li class="nav-item">
+            <a href="admin-products.html" class="nav-link">
+                <span class="nav-icon">🔨</span>
+                <span class="nav-text">Products</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-categories.html" class="nav-link">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Categories</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-brands.html" class="nav-link">
+                <span class="nav-icon">🏷️</span>
+                <span class="nav-text">Brands</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Sales</div>
+
+        <li class="nav-item">
+            <a href="admin-orders.html" class="nav-link">
+                <span class="nav-icon">📝</span>
+                <span class="nav-text">Orders</span>
+                <span class="nav-badge" id="pendingOrdersBadge">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-shipments.html" class="nav-link">
+                <span class="nav-icon">📦</span>
+                <span class="nav-text">Shipments</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-returns.html" class="nav-link">
+                <span class="nav-icon">↩️</span>
+                <span class="nav-text">Returns</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Customers</div>
+
+        <li class="nav-item">
+            <a href="admin-users.html" class="nav-link">
+                <span class="nav-icon">👥</span>
+                <span class="nav-text">All Customers</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-reports.html" class="nav-link">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Reports</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">Services</div>
+
+        <li class="nav-item">
+            <a href="admin-services.html" class="nav-link">
+                <span class="nav-icon">🔧</span>
+                <span class="nav-text">Service Bookings</span>
+                <span class="nav-badge" id="pendingServicesBadge">0</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="admin-service-schedule.html" class="nav-link">
+                <span class="nav-icon">📅</span>
+                <span class="nav-text">Schedule</span>
+            </a>
+        </li>
+
+        <div class="nav-menu-title">System</div>
+
+        <li class="nav-item">
+            <a href="admin-settings.html" class="nav-link">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Settings</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="authentication.html" class="nav-link">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-text">Logout</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <!-- Alerts -->
+    <div class="alert alert-success" id="alertSuccess">Operation completed successfully!</div>
+    <div class="alert alert-danger" id="alertDanger">An error occurred. Please try again.</div>
+    <div class="alert alert-warning" id="alertWarning">Warning: Some products are low in stock.</div>
+
+    <h1 class="page-title">Dashboard</h1>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stats-card">
+            <div class="stats-icon sales">💰</div>
+            <div class="stats-info">
+                <div class="stats-title">Total Sales</div>
+                <div class="stats-value" id="totalSalesValue">$0</div>
+                <div class="stats-change positive" id="salesChangeValue">+0% from last month</div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon orders">📦</div>
+            <div class="stats-info">
+                <div class="stats-title">Orders</div>
+                <div class="stats-value" id="totalOrdersValue">0</div>
+                <div class="stats-change positive" id="ordersChangeValue">+0% from last month</div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon customers">👥</div>
+            <div class="stats-info">
+                <div class="stats-title">Customers</div>
+                <div class="stats-value" id="totalCustomersValue">0</div>
+                <div class="stats-change positive" id="customersChangeValue">+0% from last month</div>
+            </div>
+        </div>
+
+        <div class="stats-card">
+            <div class="stats-icon revenue">📈</div>
+            <div class="stats-info">
+                <div class="stats-title">Avg. Order Value</div>
+                <div class="stats-value" id="avgOrderValue">$0</div>
+                <div class="stats-change positive" id="avgOrderChangeValue">+0% from last month</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Sales Overview</h3>
+                <div class="chart-period">
+                    <button class="period-btn" data-period="day">Day</button>
+                    <button class="period-btn" data-period="week">Week</button>
+                    <button class="period-btn active" data-period="month">Month</button>
+                    <button class="period-btn" data-period="year">Year</button>
+                </div>
+            </div>
+            <div class="chart-container" id="salesChart">
+                <!-- Sales chart will be rendered here -->
+                <canvas id="salesCanvas" width="100%" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h3 class="chart-title">Top Product Categories</h3>
+            </div>
+            <div class="chart-container" id="categoriesChart">
+                <!-- Categories chart will be rendered here -->
+                <canvas id="categoriesCanvas" width="100%" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Table -->
+    <div class="orders-table-card">
+        <div class="orders-header">
+            <h3 class="orders-title">Recent Orders</h3>
+            <a href="admin-orders.html" class="view-all">View All</a>
+        </div>
+
+        <table class="orders-table">
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="recentOrdersTable">
+            <!-- Orders data will be loaded here -->
+            <tr>
+                <td colspan="6">
+                    <div class="spinner-container">
+                        <div class="spinner"></div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Two-Column Section -->
+    <div class="two-column-grid">
+        <!-- Low Stock Items -->
+        <div class="inventory-card">
+            <div class="inventory-header">
+                <h3 class="inventory-title">Low Stock Items</h3>
+                <a href="admin-products.html?filter=lowStock" class="view-all">View All</a>
+            </div>
+
+            <ul class="inventory-list" id="lowStockList">
+                <!-- Low stock items will be loaded here -->
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+            </ul>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="recent-activity-card">
+            <div class="activity-header">
+                <h3 class="activity-title">Recent Activity</h3>
+            </div>
+
+            <ul class="activity-list" id="recentActivityList">
+                <!-- Activity data will be loaded here -->
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                </div>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Include API Client -->
+<script src="../js/api-client.js"></script>
+
+<!-- Admin Dashboard Scripts -->
+<script>
+
+    /**
+     * Set up UI event listeners
+     */
+    function setupUI() {
+        // Toggle sidebar
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+
+        menuToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+
+        // Toggle user dropdown
+        const userDropdownToggle = document.getElementById('userDropdownToggle');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+
+        userDropdownToggle.addEventListener('click', function() {
+            userDropdownMenu.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!userDropdownToggle.contains(e.target) && !userDropdownMenu.contains(e.target)) {
+                userDropdownMenu.classList.remove('active');
+            }
+        });
+
+        // Logout button
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleLogout();
+        });
+
+        // Chart period buttons
+        const periodBtns = document.querySelectorAll('.period-btn');
+
+        periodBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                periodBtns.forEach(b => b.classList.remove('active'));
+
+                // Add active class to clicked button
+                this.classList.add('active');
+
+                // Get period
+                const period = this.getAttribute('data-period');
+
+                // Update sales chart
+                loadSalesChart(period);
+            });
+        });
+    }
+
+    /**
+     * Handle logout
+     */
+    function handleLogout() {
+        ApiClient.logout()
+            .finally(() => {
+                // Clear local storage
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+
+                // Redirect to login page
+                window.location.href = 'authentication.html';
+            });
+    }
+
+    /**
+     * Load dashboard data
+     */
+    function loadDashboardData() {
+        // Load stats cards data
+        loadStatsData();
+
+        // Load sales chart (default: month)
+        loadSalesChart('month');
+
+        // Load categories chart
+        loadCategoriesChart();
+
+        // Load recent orders
+        loadRecentOrders();
+
+        // Load low stock items
+        loadLowStockItems();
+
+        // Load recent activity
+        loadRecentActivity();
+
+        // Load pending orders count for badge
+        loadPendingOrdersCount();
+
+        // Load pending services count for badge
+        loadPendingServicesCount();
+    }
+
+    /**
+     * Load stats cards data
+     */
+    function loadStatsData() {
+        // In a real application, you would call your API endpoints
+        // For example: ApiClient.getDashboardStats()
+
+        // For demo purposes, we'll use setTimeout to simulate API calls
+        setTimeout(() => {
+            const totalSales = 89452;
+            const totalOrders = 352;
+            const totalCustomers = 1245;
+            const avgOrder = 254;
+
+            // Format currency
+            const formatCurrency = value => {
+                return new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(value);
+            };
+
+            // Update stats values
+            document.getElementById('totalSalesValue').textContent = formatCurrency(totalSales);
+            document.getElementById('totalOrdersValue').textContent = totalOrders;
+            document.getElementById('totalCustomersValue').textContent = totalCustomers;
+            document.getElementById('avgOrderValue').textContent = formatCurrency(avgOrder);
+
+            // Update change values
+            document.getElementById('salesChangeValue').textContent = '+12.5% from last month';
+            document.getElementById('ordersChangeValue').textContent = '+8.2% from last month';
+            document.getElementById('customersChangeValue').textContent = '+5.3% from last month';
+            document.getElementById('avgOrderChangeValue').textContent = '+3.8% from last month';
+        }, 500);
+    }
+
+    /**
+     * Load sales chart
+     * @param {string} period Time period for chart (day, week, month, year)
+     */
+    function loadSalesChart(period) {
+        const salesCanvas = document.getElementById('salesCanvas');
+        const ctx = salesCanvas.getContext('2d');
+
+        // Clear previous chart
+        ctx.clearRect(0, 0, salesCanvas.width, salesCanvas.height);
+
+        // Show loading indicator
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, salesCanvas.width, salesCanvas.height);
+        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = '#212529';
+        ctx.textAlign = 'center';
+        ctx.fillText('Loading...', salesCanvas.width / 2, salesCanvas.height / 2);
+
+        // In a real application, you would call your API endpoint with the period parameter
+        // For example: ApiClient.getSalesData(period)
+
+        // For demo purposes, we'll use setTimeout to simulate API call
+        setTimeout(() => {
+            // Generate sample data based on selected period
+            let labels = [];
+            let data = [];
+
+            switch (period) {
+                case 'day':
+                    labels = ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM'];
+                    data = [120, 190, 300, 500, 250, 400, 360, 580, 420, 390];
+                    break;
+                case 'week':
+                    labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    data = [1700, 1800, 2100, 1950, 2300, 2800, 2500];
+                    break;
+                case 'month':
+                    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    data = [6500, 5900, 8000, 8100, 9600, 8800, 9000, 9200, 9800, 10500, 11200, 12500];
+                    break;
+                case 'year':
+                    labels = ['2020', '2021', '2022', '2023', '2024'];
+                    data = [65000, 78000, 95000, 125000, 89000];
+                    break;
+                default:
+                    labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                    data = [6500, 5900, 8000, 8100, 9600, 8800, 9000, 9200, 9800, 10500, 11200, 12500];
+            }
+
+            // Draw chart
+            drawBarChart(salesCanvas, labels, data, 'Sales ($)');
+        }, 1000);
+    }
+
+    /**
+     * Draw bar chart
+     * @param {HTMLCanvasElement} canvas Canvas element
+     * @param {Array} labels Labels for x-axis
+     * @param {Array} data Data points
+     * @param {string} title Chart title
+     */
+    function drawBarChart(canvas, labels, data, title) {
+        const ctx = canvas.getContext('2d');
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw chart background
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set up chart dimensions
+        const padding = { top: 40, right: 20, bottom: 40, left: 60 };
+        const chartWidth = canvas.width - padding.left - padding.right;
+        const chartHeight = canvas.height - padding.top - padding.bottom;
+
+        // Find max value for scaling
+        const maxValue = Math.max(...data) * 1.1;
+
+        // Draw title
+        ctx.fillStyle = '#212529';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(title, padding.left, 20);
+
+        // Draw grid lines
+        ctx.beginPath();
+        ctx.strokeStyle = '#e9ecef';
+        ctx.lineWidth = 1;
+
+        // Horizontal grid lines
+        const gridSteps = 5;
+        const gridStepHeight = chartHeight / gridSteps;
+        for (let i = 0; i <= gridSteps; i++) {
+            const y = padding.top + i * gridStepHeight;
+            ctx.moveTo(padding.left, y);
+            ctx.lineTo(padding.left + chartWidth, y);
+
+            // Draw y-axis labels
+            const value = Math.round(maxValue - (i / gridSteps) * maxValue);
+            ctx.fillStyle = '#6c757d';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText(value.toLocaleString(), padding.left - 10, y + 4);
+        }
+
+        // Vertical grid lines
+        const barCount = labels.length;
+        const barWidth = chartWidth / barCount;
+        for (let i = 0; i <= barCount; i++) {
+            const x = padding.left + i * barWidth;
+            ctx.moveTo(x, padding.top);
+            ctx.lineTo(x, padding.top + chartHeight);
+
+            // Draw x-axis labels
+            if (i < barCount) {
+                ctx.fillStyle = '#6c757d';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(labels[i], x + barWidth / 2, padding.top + chartHeight + 20);
+            }
+        }
+
+        ctx.stroke();
+
+        // Draw bars
+        for (let i = 0; i < barCount; i++) {
+            const x = padding.left + i * barWidth;
+            const barHeight = (data[i] / maxValue) * chartHeight;
+            const y = padding.top + chartHeight - barHeight;
+
+            // Draw bar
+            ctx.fillStyle = '#E74C3C';
+            ctx.fillRect(x + barWidth * 0.1, y, barWidth * 0.8, barHeight);
+        }
+    }
+
+    /**
+     * Load categories chart
+     */
+    function loadCategoriesChart() {
+        const categoriesCanvas = document.getElementById('categoriesCanvas');
+        const ctx = categoriesCanvas.getContext('2d');
+
+        // Clear canvas
+        ctx.clearRect(0, 0, categoriesCanvas.width, categoriesCanvas.height);
+
+        // Show loading indicator
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, categoriesCanvas.width, categoriesCanvas.height);
+        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = '#212529';
+        ctx.textAlign = 'center';
+        ctx.fillText('Loading...', categoriesCanvas.width / 2, categoriesCanvas.height / 2);
+
+        // In a real application, you would call your API endpoint
+        // For example: ApiClient.getCategoriesData()
+
+        // For demo purposes, we'll use setTimeout to simulate API call
+        setTimeout(() => {
+            // Sample data
+            const categories = ['Power Tools', 'Hand Tools', 'Hardware', 'Electrical', 'Plumbing'];
+            const percentages = [35, 25, 15, 15, 10];
+            const colors = ['#E74C3C', '#3498DB', '#2ECC71', '#F39C12', '#9B59B6'];
+
+            // Draw pie chart
+            drawPieChart(categoriesCanvas, categories, percentages, colors, 'Product Categories');
+        }, 1000);
+    }
+
+    /**
+     * Draw pie chart
+     * @param {HTMLCanvasElement} canvas Canvas element
+     * @param {Array} labels Category labels
+     * @param {Array} data Data points (percentages)
+     * @param {Array} colors Colors for segments
+     * @param {string} title Chart title
+     */
+    function drawPieChart(canvas, labels, data, colors, title) {
+        const ctx = canvas.getContext('2d');
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw chart background
+        ctx.fillStyle = '#f8f9fa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set up chart dimensions
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = Math.min(centerX, centerY) - 40;
+
+        // Draw title
+        ctx.fillStyle = '#212529';
+        ctx.font = 'bold 14px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(title, 20, 20);
+
+        // Draw pie segments
+        let startAngle = 0;
+        data.forEach((percentage, i) => {
+            const endAngle = startAngle + (percentage / 100) * (2 * Math.PI);
+
+            // Draw segment
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+            ctx.closePath();
+            ctx.fillStyle = colors[i];
+            ctx.fill();
+
+            startAngle = endAngle;
+        });
+
+        // Draw center circle (donut hole)
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius * 0.5, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+
+        // Draw legend
+        const legendX = canvas.width - 100;
+        const legendY = 50;
+        const legendItemHeight = 25;
+
+        labels.forEach((label, i) => {
+            const y = legendY + i * legendItemHeight;
+
+            // Draw color box
+            ctx.fillStyle = colors[i];
+            ctx.fillRect(legendX, y, 15, 15);
+
+            // Draw label
+            ctx.fillStyle = '#212529';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${label} (${data[i]}%)`, legendX + 25, y + 7);
+        });
+    }
+
+    /**
+     * Load recent orders
+     */
+    function loadRecentOrders() {
+        const recentOrdersTable = document.getElementById('recentOrdersTable');
+
+        // In a real application, you would call your API endpoint
+        // For example: ApiClient.getRecentOrders()
+
+        // For demo purposes, we'll simulate the API response
+        ApiClient.getAllOrders()
+            .then(response => {
+                // Get the first 5 orders
+                const recentOrders = response.content.slice(0, 5);
+
+                // Clear table
+                recentOrdersTable.innerHTML = '';
+
+                if (recentOrders.length === 0) {
+                    recentOrdersTable.innerHTML = '<tr><td colspan="6">No recent orders found.</td></tr>';
+                    return;
+                }
+
+                // Render each order
+                recentOrders.forEach(order => {
+                    const row = document.createElement('tr');
+
+                    // Format date
+                    const orderDate = new Date(order.createdAt);
+                    const formattedDate = orderDate.toLocaleDateString();
+
+                    // Determine status class
+                    let statusClass = '';
+                    switch (order.status) {
+                        case 'COMPLETED':
+                            statusClass = 'status-completed';
+                            break;
+                        case 'PROCESSING':
+                            statusClass = 'status-processing';
+                            break;
+                        case 'CANCELLED':
+                            statusClass = 'status-cancelled';
+                            break;
+                        case 'SHIPPED':
+                            statusClass = 'status-shipped';
+                            break;
+                        default:
+                            statusClass = '';
+                    }
+
+                    // Format currency
+                    const formatCurrency = value => {
+                        return new Intl.NumberFormat('en-US', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }).format(value);
+                    };
+
+                    // Get user initials
+                    const getInitials = (firstName, lastName) => {
+                        return (firstName ? firstName.charAt(0) : '') + (lastName ? lastName.charAt(0) : '');
+                    };
+
+                    // Get full name
+                    const getFullName = (firstName, lastName) => {
+                        return `${firstName || ''} ${lastName || ''}`.trim();
+                    };
+
+                    // Create row
+                    row.innerHTML = `
+                        <td>${order.orderNumber}</td>
+                        <td>
+                            <div class="customer-cell">
+                                <div class="customer-avatar">${getInitials(order.userFirstName, order.userLastName)}</div>
+                                <span>${getFullName(order.userFirstName, order.userLastName)}</span>
+                            </div>
+                        </td>
+                        <td>${formattedDate}</td>
+                        <td>${formatCurrency(order.total)}</td>
+                        <td><span class="order-status ${statusClass}">${order.status}</span></td>
+                        <td class="action-menu">
+                            <button class="action-dropdown" data-order-id="${order.id}">⋮</button>
+                            <div class="action-dropdown-menu" id="actionMenu-${order.id}">
+                                <a href="admin-order-details.html?id=${order.id}" class="action-dropdown-item">View Details</a>
+                                <a href="#" class="action-dropdown-item" data-action="update-status" data-order-id="${order.id}">Update Status</a>
+                                <a href="#" class="action-dropdown-item" data-action="email-customer" data-order-id="${order.id}">Email Customer</a>
+                            </div>
+                        </td>
+                    `;
+
+                    recentOrdersTable.appendChild(row);
+                });
+
+                // Add event listeners for action dropdowns
+                setupActionDropdowns();
+            })
+            .catch(error => {
+                console.error('Error loading recent orders:', error);
+                recentOrdersTable.innerHTML = '<tr><td colspan="6">Failed to load recent orders.</td></tr>';
+            });
+    }
+
+    /**
+     * Set up action dropdowns for order table
+     */
+    function setupActionDropdowns() {
+        const actionDropdowns = document.querySelectorAll('.action-dropdown');
+
+        actionDropdowns.forEach(dropdown => {
+            const orderId = dropdown.getAttribute('data-order-id');
+            const menu = document.getElementById(`actionMenu-${orderId}`);
+
+            // Toggle dropdown menu
+            dropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                // Close all other menus
+                document.querySelectorAll('.action-dropdown-menu.active').forEach(el => {
+                    if (el !== menu) {
+                        el.classList.remove('active');
+                    }
+                });
+
+                // Toggle current menu
+                menu.classList.toggle('active');
+            });
+
+            // Setup action handlers
+            const actions = menu.querySelectorAll('[data-action]');
+
+            actions.forEach(action => {
+                action.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const actionType = this.getAttribute('data-action');
+                    const orderId = this.getAttribute('data-order-id');
+
+                    // Handle different actions
+                    switch (actionType) {
+                        case 'update-status':
+                            // In a real app, you'd show a status update modal
+                            alert(`Update status for order ${orderId}`);
+                            break;
+                        case 'email-customer':
+                            // In a real app, you'd show an email dialog
+                            alert(`Email customer for order ${orderId}`);
+                            break;
+                    }
+
+                    // Close menu
+                    menu.classList.remove('active');
+                });
+            });
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.action-dropdown-menu.active').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        });
+    }
+
+    /**
+     * Load low stock items
+     */
+    function loadLowStockItems() {
+        const lowStockList = document.getElementById('lowStockList');
+
+        // In a real application, you would call your API endpoint
+        // For example: ApiClient.getLowStockProducts()
+        ApiClient.getLowStockProducts(10)
+            .then(products => {
+                // Clear list
+                lowStockList.innerHTML = '';
+
+                if (products.length === 0) {
+                    lowStockList.innerHTML = '<p>No low stock items found.</p>';
+                    return;
+                }
+
+                // Show only 5 items
+                const lowStockItems = products.slice(0, 5);
+
+                // Render each item
+                lowStockItems.forEach(product => {
+                    const stockLevel = product.stock;
+                    let levelClass = 'medium';
+
+                    if (stockLevel <= 5) {
+                        levelClass = 'low';
+                    } else if (stockLevel >= 15) {
+                        levelClass = 'high';
+                    }
+
+                    const item = document.createElement('li');
+                    item.className = 'inventory-item';
+                    item.innerHTML = `
+                        <div class="product-info">
+                            <div class="product-image">
+                                <img src="${product.imageUrl || '../img/placeholder.jpg'}" alt="${product.name}">
+                            </div>
+                            <div>
+                                <div class="product-name">${product.name}</div>
+                                <div class="product-category">${product.categoryName}, ${product.size}</div>
+                            </div>
+                        </div>
+                        <div class="product-stock">
+                            <div class="stock-level ${levelClass}">${stockLevel} in stock</div>
+                            <div>Reorder point: 10</div>
+                        </div>
+                    `;
+
+                    lowStockList.appendChild(item);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading low stock items:', error);
+                lowStockList.innerHTML = '<p>Failed to load low stock items.</p>';
+            });
+    }
+
+    /**
+     * Load recent activity
+     */
+    function loadRecentActivity() {
+        const activityList = document.getElementById('recentActivityList');
+
+        // In a real application, you would call your API endpoint
+        // For example: ApiClient.getRecentActivity()
+
+        // For demo purposes, we'll use mock data
+        setTimeout(() => {
+            // Sample activity data
+            const activities = [
+                {
+                    type: 'order',
+                    text: 'New order <strong>#TN78901</strong> received from <strong>John Smith</strong>',
+                    time: '15 minutes ago'
+                },
+                {
+                    type: 'user',
+                    text: '<strong>Michael Brown</strong> registered a new account',
+                    time: '2 hours ago'
+                },
+                {
+                    type: 'product',
+                    text: '<strong>Admin</strong> updated inventory for <strong>DeWalt Cordless Drill</strong>',
+                    time: '3 hours ago'
+                },
+                {
+                    type: 'system',
+                    text: 'System generated low stock alert for <strong>5 products</strong>',
+                    time: '5 hours ago'
+                },
+                {
+                    type: 'order',
+                    text: 'Order <strong>#TN78890</strong> has been shipped to <strong>Jessica Williams</strong>',
+                    time: 'Yesterday'
+                }
+            ];
+
+            // Clear list
+            activityList.innerHTML = '';
+
+            // Render each activity
+            activities.forEach(activity => {
+                const item = document.createElement('li');
+                item.className = 'activity-item';
+
+                // Determine icon based on type
+                let icon = '';
+                switch (activity.type) {
+                    case 'order':
+                        icon = '📦';
+                        break;
+                    case 'user':
+                        icon = '👤';
+                        break;
+                    case 'product':
+                        icon = '🔨';
+                        break;
+                    case 'system':
+                        icon = '⚙️';
+                        break;
+                    default:
+                        icon = '📝';
+                }
+
+                item.innerHTML = `
+                    <div class="activity-icon ${activity.type}">
+                        ${icon}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">${activity.text}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                `;
+
+                activityList.appendChild(item);
+            });
+        }, 1000);
+    }
+
+    /**
+     * Load pending orders count for badge
+     */
+    function loadPendingOrdersCount() {
+        // In a real application, you would call your API endpoint
+        // For example: ApiClient.getPendingOrdersCount()
+
+        // For demo purposes, we'll use mock data
+        setTimeout(() => {
+            const pendingCount = 8;
+
+            // Update badge
+            const badge = document.getElementById('pendingOrdersBadge');
+            badge.textContent = pendingCount;
+
+            // Show badge only if count > 0
+            badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+        }, 1000);
+    }
+
+    /**
+     * Load pending services count for badge
+     */
+    function loadPendingServicesCount() {
+        // In a real application, you would call your API endpoint
+        // For example: ApiClient.getPendingServicesCount()
+
+        // For demo purposes, we'll use mock data
+        setTimeout(() => {
+            const pendingCount = 3;
+
+            // Update badge
+            const badge = document.getElementById('pendingServicesBadge');
+            badge.textContent = pendingCount;
+
+            // Show badge only if count > 0
+            badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
+        }, 1000);
+    }
+
+    /**
+     * Show alert message
+     * @param {string} type Alert type ('success', 'danger', 'warning')
+     * @param {string} message Alert message
+     */
+    function showAlert(type, message) {
+        const alert = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}`);
+
+        if (alert) {
+            alert.textContent = message;
+            alert.classList.add('show');
+
+            // Hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+    }
+</script>
+</body>
+</html>

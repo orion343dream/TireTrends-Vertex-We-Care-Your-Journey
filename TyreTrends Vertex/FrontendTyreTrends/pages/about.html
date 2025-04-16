@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | TyreTrends</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #222831;
+            --secondary: #D65A31;
+            --light-gray: #EEEEEE;
+            --dark-gray: #393E46;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Page Title */
+        .page-title {
+            background-color: var(--primary);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .page-title p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        .about-section {
+            padding: 50px 0;
+            margin-bottom: 30px;
+        }
+
+        .about-section.alt-bg {
+            background-color: white;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--dark-gray);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Company Story */
+        .company-story {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .story-image {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .story-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .story-content h3 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .story-content p {
+            margin-bottom: 20px;
+        }
+
+        /* Mission & Values */
+        .mission-values {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 50px;
+        }
+
+        .mission-values h3 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .mission-values p {
+            margin-bottom: 30px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .value-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .value-icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+
+        .value-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .team-member {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .member-image {
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .member-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .team-member:hover .member-image img {
+            transform: scale(1.05);
+        }
+
+        .member-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .member-title {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .member-bio {
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .social-link {
+            color: var(--dark-gray);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--secondary);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background-color: var(--primary);
+            color: white;
+            padding: 80px 0;
+            margin: 50px 0;
+            text-align: center;
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 40px auto 0;
+            position: relative;
+        }
+
+        .testimonial-item {
+            padding: 0 40px;
+        }
+
+        .testimonial-quote {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .testimonial-quote::before,
+        .testimonial-quote::after {
+            content: '"';
+            font-size: 2.5rem;
+            color: var(--secondary);
+            position: absolute;
+        }
+
+        .testimonial-quote::before {
+            left: -30px;
+            top: -20px;
+        }
+
+        .testimonial-quote::after {
+            right: -30px;
+            bottom: -40px;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .testimonial-company {
+            color: var(--secondary);
+            font-style: italic;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 50px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--dark-gray);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .company-story {
+                grid-template-columns: 1fr;
+            }
+
+            .value-card,
+            .team-member {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<header>
+    <!-- Navigation will be injected here by common.js -->
+</header>
+
+<!-- Page Title -->
+<section class="page-title">
+    <div class="container">
+        <h1>About TyreTrends</h1>
+        <p>Driving innovation and quality in the Tyre industry since 2010</p>
+    </div>
+</section>
+
+<!-- Company Story -->
+<section class="about-section">
+    <div class="container">
+        <div class="company-story">
+            <div class="story-image">
+                <img src="https://via.placeholder.com/600x400?text=Our+Story" alt="TyreTrends Company Story">
+            </div>
+            <div class="story-content">
+                <h3>Our Story</h3>
+                <p>TyreTrends was founded in 2010 with a simple mission: to revolutionize the way people shop for and purchase Tyres. We began as a small family-owned business with a single location in Portland, Oregon, driven by a passion for exceptional customer service and quality products.</p>
+                <p>Over the years, we've grown into a nationwide retailer with over 50 locations across the United States, but our core values remain the same. We believe in providing our customers with the perfect combination of premium products, expert advice, and transparent pricing.</p>
+                <p>Our founders, James and Sarah Wheeler, both automotive enthusiasts, recognized that the Tyre buying process was often confusing and frustrating for consumers. They set out to create a more customer-friendly approach, combining traditional service values with modern technology solutions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Values -->
+<section class="about-section alt-bg">
+    <div class="container">
+        <div class="section-header">
+            <h2>Our Mission & Values</h2>
+            <p>What drives us every day and guides our business decisions</p>
+        </div>
+
+        <div class="mission-values">
+            <h3>Our Mission</h3>
+            <p>"To provide every customer with the perfect Tyres for their unique needs, delivered with exceptional service, expert advice, and transparent pricing."</p>
+
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">🔍</div>
+                    <h4 class="value-title">Quality Focus</h4>
+                    <p>We rigorously test and select only the highest quality Tyres from trusted manufacturers to ensure safety, performance, and durability.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">🤝</div>
+                    <h4 class="value-title">Customer First</h4>
+                    <p>Every decision we make puts the customer's needs and satisfaction at the forefront, creating relationships built on trust and exceptional service.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">💡</div>
+                    <h4 class="value-title">Innovation</h4>
+                    <p>We continuously evolve our services, technology, and processes to improve the Tyre buying experience and stay ahead of industry trends.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">🌍</div>
+                    <h4 class="value-title">Sustainability</h4>
+                    <p>We're committed to environmentally responsible practices, including proper Tyre recycling, energy-efficient facilities, and sustainable operations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Meet Our Team</h2>
+            <p>The dedicated professionals who make TyreTrends exceptional</p>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="https://via.placeholder.com/300x300?text=James+Wheeler" alt="James Wheeler">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">James Wheeler</h3>
+                    <div class="member-title">Co-Founder & CEO</div>
+                    <p class="member-bio">James has over 25 years of experience in the automotive industry and is passionate about combining traditional service values with cutting-edge technology.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">tw</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="https://via.placeholder.com/300x300?text=Sarah+Wheeler" alt="Sarah Wheeler">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Sarah Wheeler</h3>
+                    <div class="member-title">Co-Founder & COO</div>
+                    <p class="member-bio">With a background in logistics and supply chain management, Sarah ensures that TyreTrends delivers exceptional operational excellence and customer satisfaction.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">tw</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="https://via.placeholder.com/300x300?text=Michael+Johnson" alt="Michael Johnson">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Michael Johnson</h3>
+                    <div class="member-title">Chief Technology Officer</div>
+                    <p class="member-bio">Michael leads our technology initiatives, overseeing the development of our e-commerce platform and innovative digital solutions for Tyre buyers.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">tw</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-member">
+                <div class="member-image">
+                    <img src="https://via.placeholder.com/300x300?text=Jennifer+Lee" alt="Jennifer Lee">
+                </div>
+                <div class="member-info">
+                    <h3 class="member-name">Jennifer Lee</h3>
+                    <div class="member-title">VP of Customer Experience</div>
+                    <p class="member-bio">Jennifer ensures that every customer interaction exceeds expectations, from online shopping to in-store service to post-purchase support.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link">in</a>
+                        <a href="#" class="social-link">tw</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2>What Our Customers Say</h2>
+            <p>Real stories from satisfied TyreTrends customers</p>
+        </div>
+
+        <div class="testimonial-slider">
+            <div class="testimonial-item">
+                <div class="testimonial-quote">TyreTrends made buying new Tyres stress-free. Their online Tyre finder tool helped me identify the perfect Tyres for my SUV, and the installation was quick and professional. I couldn't be happier with the service and quality!</div>
+                <div class="testimonial-author">Robert Davis</div>
+                <div class="testimonial-company">Portland, OR</div>
+            </div>
+            <!-- Additional testimonials would be controlled via JavaScript slider -->
+        </div>
+    </div>
+</section>
+
+<!-- Company Stats -->
+<section class="stats-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>TyreTrends by the Numbers</h2>
+            <p>Our growth and impact over the years</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Retail Locations</div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-number">1M+</div>
+                <div class="stat-label">Tyres Sold</div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-number">500K+</div>
+                <div class="stat-label">Happy Customers</div>
+            </div>
+
+            <div class="stat-item">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Years in Business</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Section -->
+<footer>
+    <!-- Footer will be injected here by common.js -->
+</footer>
+
+<!-- Include API Client -->
+<script src="js/api-client.js"></script>
+
+<!-- Include Common Nav/Footer -->
+<script src="js/common.js"></script>
+
+<!-- About Page Specific Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // You could add a simple testimonial slider here if desired
+        // For now, we'll keep it simple with a single testimonial
+    });
+</script>
+</body>
+</html>

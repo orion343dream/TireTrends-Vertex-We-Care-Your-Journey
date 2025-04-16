@@ -1,0 +1,899 @@
+<!-- header.html - Improved header component for TyreTrends -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Header Component</title>
+    <style>
+        /* Common Variables - Match with main site theme */
+        :root {
+            --primary: #222831;      /* Dark blue-gray for header/footer */
+            --secondary: #D65A31;    /* Orange accent color for buttons/highlights */
+            --light-gray: #F2F2F2;   /* Light background color */
+            --dark-gray: #393E46;    /* Darker gray for text */
+            --white: #FFFFFF;
+            --shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            --transition: all 0.25s ease;
+        }
+
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Main Header Styles */
+        .site-header {
+            z-index: 2000;
+            font-size: 14px;
+            position: fixed;
+            top: 0;
+            width: 100%; /* Ensure it spans the full width */
+            z-index: 1000; /* Ensure it stays above other elements */
+        }
+
+        /* Upper Header Section */
+        .header-upper {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--secondary);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            flex: 1;
+            max-width: 400px;
+            margin: 0 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 13px;
+        }
+
+        .search-bar button {
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-bar button:hover {
+            background-color: #bf4f2c;
+        }
+
+        /* Header Actions Section */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-action-item {
+            position: relative;
+        }
+
+        .action-link {
+            color: var(--white);
+            font-size: 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--secondary);
+            color: var(--white);
+            font-size: 10px;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--secondary);
+            color: var(--white);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .btn:hover {
+            background-color: #bf4f2c;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(214, 90, 49, 0.2);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        /* User Account */
+        .user-account {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            padding: 4px 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .user-account:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: bold;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .user-name {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        /* Lower Header Section - Navigation */
+        .header-lower {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: relative;
+            font-size: 13px;
+        }
+
+        .category-nav {
+            position: relative;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 15px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--secondary);
+        }
+
+        .dropdown-toggle::after {
+            content: "▼";
+            font-size: 8px;
+            margin-left: 4px;
+            transition: var(--transition);
+        }
+
+        .nav-item:hover .dropdown-toggle::after {
+            transform: rotate(180deg);
+        }
+
+        /* Dropdown Menus */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--white);
+            width: 200px;
+            box-shadow: var(--shadow);
+            border-radius: 4px;
+            padding: 8px 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 8px 12px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-gray);
+            color: var(--secondary);
+        }
+
+        /* User Dropdown Menu */
+        .user-dropdown {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 250px;
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            overflow: hidden;
+        }
+
+        .user-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown-header {
+            padding: 15px;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .user-dropdown-header .user-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+            margin-right: 12px;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-email {
+            margin: 0;
+            font-size: 12px;
+            color: var(--dark-gray);
+        }
+
+        .user-dropdown-body {
+            padding: 8px 0;
+        }
+
+        .user-dropdown-body .dropdown-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+        }
+
+        .user-dropdown-body .dropdown-item i {
+            margin-right: 10px;
+            color: var(--dark-gray);
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .user-dropdown-footer {
+            padding: 12px 15px;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px;
+            background-color: #f8f9fa;
+            color: #dc3545;
+            border: 1px solid #dc3545;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            font-size: 13px;
+        }
+
+        .btn-logout:hover {
+            background-color: #dc3545;
+            color: var(--white);
+        }
+
+        .btn-logout i {
+            margin-right: 8px;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            color: var(--white);
+            font-size: 20px;
+        }
+
+        /* Backdrop */
+        .backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 90;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .backdrop.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 991px) {
+            .search-bar {
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+
+            .search-bar {
+                order: 3;
+                margin: 10px 0 0;
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .header-lower {
+                display: none;
+            }
+
+            .auth-buttons .btn-outline {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Top Navigation Bar -->
+<header class="site-header">
+    <!-- Upper Header Section -->
+    <div class="header-upper">
+        <div class="container header-container">
+            <!-- Logo -->
+            <a href="../index.html" class="logo">Tyre<span>Trends<span> Vertex</span></span></a>
+
+            <!-- Search Bar -->
+            <form id="searchForm" class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search for tires, brands, or sizes...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+
+            <!-- Header Actions -->
+            <div class="header-actions">
+                <!-- Cart Icon -->
+                <div class="header-action-item" id="cartContainer">
+                    <a href="cart.html" class="action-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+
+                <!-- Account Section (changes based on authentication status) -->
+                <div class="header-action-item" id="accountContainer">
+                    <!-- This will be populated by JavaScript based on authentication status -->
+                </div>
+
+                <!-- Mobile menu button -->
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lower Header Section - Category Navigation -->
+    <div class="header-lower">
+        <div class="container">
+            <nav class="category-nav">
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="products.html" class="nav-link">All Tires</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Shop By Vehicle</a>
+                        <div class="dropdown-menu">
+                            <a href="tyre-finder.html" class="dropdown-item">Tire Finder</a>
+                            <a href="user-vehicles.html" class="dropdown-item">My Vehicles</a>
+                            <a href="products.html?category=passenger" class="dropdown-item">Passenger Tires</a>
+                            <a href="products.html?category=suv" class="dropdown-item">SUV Tires</a>
+                            <a href="products.html?category=truck" class="dropdown-item">Truck Tires</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Brands</a>
+                        <div class="dropdown-menu">
+                            <a href="products.html?brand=michelin" class="dropdown-item">Michelin</a>
+                            <a href="products.html?brand=goodyear" class="dropdown-item">Goodyear</a>
+                            <a href="products.html?brand=bridgestone" class="dropdown-item">Bridgestone</a>
+                            <a href="products.html?brand=continental" class="dropdown-item">Continental</a>
+                            <a href="products.html?brand=pirelli" class="dropdown-item">Pirelli</a>
+                            <a href="products.html?brands" class="dropdown-item">All Brands</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Services</a>
+                        <div class="dropdown-menu">
+                            <a href="service-booking.html?service=installation" class="dropdown-item">Tire Installation</a>
+                            <a href="service-booking.html?service=alignment" class="dropdown-item">Wheel Alignment</a>
+                            <a href="service-booking.html?service=rotation" class="dropdown-item">Tire Rotation</a>
+                            <a href="service-booking.html?service=repair" class="dropdown-item">Flat Repair</a>
+                            <a href="service-booking.html" class="dropdown-item">All Services</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a href="promotions.html" class="nav-link">Promotions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="contact.html" class="nav-link">Contact Us</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- User account dropdown (only shown when logged in) -->
+    <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+            <div class="user-avatar">
+                <span id="userInitials">U</span>
+            </div>
+            <div class="user-info">
+                <p class="user-name" id="userDisplayName">User Name</p>
+                <p class="user-email" id="userEmail">user@example.com</p>
+            </div>
+        </div>
+        <div class="user-dropdown-body">
+            <a href="user-account.html" class="dropdown-item">
+                <i class="fas fa-user"></i> My Account
+            </a>
+            <a href="orders.html" class="dropdown-item">
+                <i class="fas fa-box"></i> My Orders
+            </a>
+            <a href="user-vehicles.html" class="dropdown-item">
+                <i class="fas fa-car"></i> My Vehicles
+            </a>
+            <a href="wishlist.html" class="dropdown-item">
+                <i class="fas fa-heart"></i> Wishlist
+            </a>
+            <a href="user-settings.html" class="dropdown-item">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="service-bookings.html" class="dropdown-item">
+                <i class="fas fa-tools"></i> Service Bookings
+            </a>
+        </div>
+       <div class="user-dropdown-footer">
+            <button id="logoutBtn" class="btn-logout" onclick="window.location.href='authentication.html';">
+                <i class="fas fa-sign-out-alt"></i> Log Out
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Backdrop overlay for dropdowns -->
+<div class="backdrop" id="backdrop"></div>
+
+<!-- Load jQuery -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- Header JavaScript -->
+<script>
+    // // Configure API base URL
+    // const API_BASE_URL = "http://localhost:8080/api/v1";
+
+    // Run when document is ready
+    $(document).ready(function() {
+        // Initialize header functionality
+        initHeader();
+
+        // Add event listeners
+        setupEventListeners();
+    });
+
+    /**
+     * Initialize the header component
+     */
+    function initHeader() {
+        // Check authentication status and update UI
+        checkAuthStatus();
+
+        // Update cart count
+        updateCartCount();
+    }
+
+    /**
+     * Setup all event listeners for header
+     */
+    function setupEventListeners() {
+        // User dropdown toggle
+        $(document).on('click', '.user-account', function(e) {
+            e.stopPropagation();
+            $('#userDropdown').toggleClass('show');
+            $('#backdrop').toggleClass('show');
+        });
+
+        // Close dropdown when clicking elsewhere
+        $(document).on('click', function() {
+            $('#userDropdown').removeClass('show');
+            $('#backdrop').removeClass('show');
+        });
+
+        // Prevent dropdown from closing when clicking inside it
+        $('#userDropdown').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Logout button click
+        $(document).on('click', '#logoutBtn', function() {
+            logout();
+        });
+    }
+
+    /**
+     * Check if user is authenticated and update UI accordingly
+     */
+    function checkAuthStatus() {
+        const token = localStorage.getItem('token');
+        const userEmail = localStorage.getItem('userEmail');
+
+        if (token && userEmail) {
+            // User is logged in, fetch user details and update UI
+            fetchUserProfile(token, userEmail);
+        } else {
+            // User is not logged in, show login/register buttons
+            showAuthButtons();
+        }
+    }
+
+    /**
+     * Fetch user profile to display name and email
+     * @param {string} token - Authentication token
+     * @param {string} email - User email
+     */
+    function fetchUserProfile(token, email) {
+        $.ajax({
+            url: `${API_BASE_URL}/user/profile`,
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            success: function(response) {
+                if (response.code === 200 && response.data) {
+                    // Update UI with user data
+                    updateUIForAuthenticatedUser(response.data);
+                } else {
+                    // If API response is invalid but we have token, still show user interface
+                    // Don't clear auth data on simple API errors
+                    showDefaultUserInterface(email);
+                }
+            },
+            error: function(xhr) {
+                // Only clear auth data on explicit authentication errors
+                if (xhr.status === 401 || xhr.status === 403) {
+                    clearAuthData();
+                    showAuthButtons();
+                } else {
+                    // For other errors (network issues, server down, etc.),
+                    // keep user logged in with default info
+                    showDefaultUserInterface(email);
+                }
+            }
+        });
+    }
+
+    /**
+     * Show a default user interface when profile can't be fetched
+     * but we know the user is logged in
+     * @param {string} email - User email
+     */
+    function showDefaultUserInterface(email) {
+        // Extract initials from email for avatar
+        const initials = email.substring(0, 2).toUpperCase();
+
+        // Create user account element with basic info
+        const userAccountHtml = `
+        <div class="user-account">
+            <div class="user-avatar">
+                <span>${initials}</span>
+            </div>
+            <span class="user-name">Account</span>
+            <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 10px;"></i>
+        </div>
+    `;
+
+        // Update account container
+        $('#accountContainer').html(userAccountHtml);
+
+        // Update user dropdown with minimal info
+        $('#userInitials').text(initials);
+        $('#userDisplayName').text('My Account');
+        $('#userEmail').text(email);
+    }
+
+    /**
+     * Update UI elements to show authenticated user
+     * @param {Object} userData - User profile data
+     */
+    function updateUIForAuthenticatedUser(userData) {
+        // Get first letter of first and last name for avatar
+        const firstInitial = userData.firstName ? userData.firstName.charAt(0) : '';
+        const lastInitial = userData.lastName ? userData.lastName.charAt(0) : '';
+        const initials = (firstInitial + lastInitial).toUpperCase();
+
+        // Create user account element
+        const userAccountHtml = `
+        <div class="user-account">
+            <div class="user-avatar">
+                <span>${initials}</span>
+            </div>
+            <span class="user-name">${userData.firstName || 'User'}</span>
+            <i class="fas fa-chevron-down" style="margin-left: 5px; font-size: 10px;"></i>
+        </div>
+    `;
+
+        // Update account container
+        $('#accountContainer').html(userAccountHtml);
+
+        // Update user dropdown
+        $('#userInitials').text(initials);
+        $('#userDisplayName').text(`${userData.firstName || ''} ${userData.lastName || ''}`);
+        $('#userEmail').text(userData.email);
+    }
+
+    /**
+     * Show login/register buttons for non-authenticated users
+     */
+    function showAuthButtons() {
+        // Create auth buttons
+        const authButtonsHtml = `
+        <div class="auth-buttons">
+            <a href="authentication.html?action=login" class="btn btn-sm btn-outline">Login</a>
+            <a href="authentication.html?action=register" class="btn btn-sm">Register</a>
+        </div>
+    `;
+
+        // Update account container
+        $('#accountContainer').html(authButtonsHtml);
+    }
+
+    /**
+     * Update cart count in header
+     */
+    function updateCartCount() {
+        // Check if user is logged in
+        if (isAuthenticated()) {
+            const token = localStorage.getItem('token');
+            // Get cart from API
+            $.ajax({
+                url: `${API_BASE_URL}/cart`,
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                },
+                success: function(response) {
+                    if (response.code === 200) {
+                        const totalItems = response.data.totalItems || 0;
+                        updateCartBadge(totalItems);
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error retrieving cart:', xhr.status);
+
+                    // Only clear auth data on specific authentication errors
+                    if (xhr.status === 401) {
+                        clearAuthData();
+                        updateCartFromLocalStorage();
+                    } else {
+                        // For other errors, just show 0 or use localStorage as fallback
+                        updateCartFromLocalStorage();
+                    }
+                }
+            });
+        } else {
+            // Update from localStorage for non-logged in users
+            updateCartFromLocalStorage();
+        }
+    }
+
+    /**
+     * Update cart count from localStorage
+     */
+    function updateCartFromLocalStorage() {
+        try {
+            const cartData = localStorage.getItem('cart');
+            if (cartData) {
+                const cart = JSON.parse(cartData);
+                updateCartBadge(cart.totalItems || 0);
+            } else {
+                updateCartBadge(0);
+            }
+        } catch (e) {
+            console.error('Error parsing cart from localStorage', e);
+            updateCartBadge(0);
+        }
+    }
+
+    /**
+     * Update cart badge in navigation
+     * @param {number} count - Number of items in cart
+     */
+    function updateCartBadge(count) {
+        $('#cartCount').text(count);
+    }
+
+    /**
+     * Check if user is authenticated
+     * @returns {boolean} True if user is authenticated
+     */
+    function isAuthenticated() {
+        return !!localStorage.getItem('token');
+    }
+
+    /**
+     * Clear authentication data from localStorage
+     */
+    function clearAuthData() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+    }
+
+ /**
+  * Handle user logout
+  */
+ function logout() {
+     const token = localStorage.getItem('token');
+
+     if (token) {
+         // Call logout API endpoint
+         $.ajax({
+             url: `${API_BASE_URL}/auth/logout`,
+             method: 'POST',
+             headers: {
+                 'Authorization': `Bearer ${token}`
+             },
+             complete: function() {
+                 console.log('Logout API called successfully');
+                 // Clear auth data and update UI regardless of response
+                 clearAuthData();
+                 showAuthButtons();
+
+                 // Redirect to homepage
+                 window.location.href = '../index.html';
+             }
+         });
+     } else {
+         console.log('No token found, clearing auth data');
+         // If no token found, just clear data and update UI
+         clearAuthData();
+         showAuthButtons();
+     }
+ }
+
+
+</script>
+</body>
+</html>
