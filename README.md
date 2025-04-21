@@ -1,84 +1,128 @@
-
-# 🌟 TireTrends Web App 🌟  
-##  🚗   *We Care for Your Journey!*   🏆
+# 🌟 TireTrends E-Commerce Platform 🌟  
+## 🚗 *Your Complete Tire & Automotive Service Solution* 🏆
 
 ## 📄 Overview  
+The **TireTrends** platform is a comprehensive e-commerce solution designed specifically for tire retailers and automotive service providers. This full-stack application streamlines 🛒 product sales, 🔧 service booking, 🚗 vehicle management, and 📈 inventory tracking, providing a seamless experience for both businesses and consumers.
 
-The **tiretrends Web App** is an all-in-one platform designed to enhance 🚗 tyre and vehicle 🌟 accessory management for both customers and administrators. This web-based solution streamlines 🛒 product sales, 📈 order processing, 💼 inventory tracking, and 🏰 supplier management, providing a seamless experience for businesses and consumers alike.  
+## 🎬 Demo Video
+[![TireTrends Demo Video](https://img.youtube.com/vi/9jo4etKr5Tk/0.jpg)](https://youtu.be/9jo4etKr5Tk?si=ZiDiuuq_sMF2D2tW)
+
+Click the image above to watch a complete walkthrough of the TireTrends platform.
 
 ## 🏷️ Features  
 
 ### 👩‍💼 Admin Features:  
-
-- **📅 Comprehensive Dashboard** – Monitor and manage all business operations in one place.  
-- **🏆 Tyres & Rims Management** – Add, update, and track inventory for tyres and rims.  
-- **🔋 Batteries & Item List** – Maintain a structured catalog of all vehicle-related products.  
-- **💸 Sales & Budget Monitoring** – Track revenue, expenses, and financial reports for business insights.  
-- **🏢 Supplier & Supply Chain Management** – Manage supplier details, purchase orders, and restocking.  
-- **👥 Customer & Order Management** – Oversee customer accounts, process orders, and handle returns or queries.  
-- **📦 Order Processing & Fulfillment** – Track pending, in-progress, and completed orders efficiently.  
+- **📊 Dashboard** – Monitor sales, inventory, and service bookings in one place
+- **🏆 Brand & Category Management** – Easily add and update product categories and brands
+- **📦 Product Management** – Add, update, and track inventory for tires and accessories
+- **⭐ Review Moderation** – Approve customer reviews to maintain quality feedback
+- **📉 Low Stock Alerts** – Get notified when inventory levels fall below thresholds
+- **🔧 Service Booking Management** – View and manage customer service appointments
+- **🛠️ Order Processing & Fulfillment** – Track and update order status efficiently
 
 ### 🚶‍♂️ Customer Features:  
+- **🛒 Product Browsing & Purchasing** – Browse, filter, and buy tires and accessories
+- **🔍 Tire Finder Tool** – Find the perfect tires by vehicle or by tire size
+- **🚗 Vehicle Management** – Save vehicle details for easier tire shopping and service booking
+- **🔧 Service Booking** – Schedule automotive services like tire installation and alignment
+- **👤 User Profile & Order History** – Manage personal information and track past orders
+- **💳 Secure Checkout** – Complete purchases with confidence
+- **🔐 Password Reset** – Securely reset forgotten passwords via email
 
-- **🛒 Tyre & Accessory Purchase** – Browse, select, and buy tyres, rims, and batteries online.  
-- **💳 Secure Payments** – Integrated payment options for a hassle-free checkout process.  
-- **📦 Order Tracking & Notifications** – Stay updated on order status and delivery.  
+## 📸 Screenshots
 
-## 🛠️ Installation  
+### Homepage & Product Browsing
+![Homepage](https://via.placeholder.com/800x400?text=TireTrends+Homepage)
+![Product Listing](https://via.placeholder.com/800x400?text=Product+Listing+Page)
+
+### Admin Dashboard
+![Admin Dashboard](https://via.placeholder.com/800x400?text=Admin+Dashboard)
+![Product Management](https://via.placeholder.com/800x400?text=Product+Management)
+
+### Customer Features
+![Tire Finder](https://via.placeholder.com/800x400?text=Tire+Finder+Tool)
+![Service Booking](https://via.placeholder.com/800x400?text=Service+Booking)
+![Vehicle Management](https://via.placeholder.com/800x400?text=Vehicle+Management)
+
+## 🛠️ Technology Stack  
+
+### Backend:
+- ☕ Java 17 with Spring Boot
+- 🔒 Spring Security with JWT Authentication
+- 🗄️ Spring Data JPA
+- 📊 MySQL Database
+- 📅 Scheduled Tasks for maintenance operations
+
+### Frontend:
+- 🌐 HTML5, CSS3, JavaScript
+- 📱 Responsive design for mobile and desktop
+- 🔄 jQuery for DOM manipulation and AJAX calls
+
+## 💻 Installation  
 
 ### 📃 Prerequisites:  
-
 - ☕ Java 17+  
-- 💻 Spring Boot  
-- 🏢 MySQL  
-- 💻 HTML,CSS,JS (for frontend development)  
-- ✨ Maven  
+- 🗄️ MySQL Database
+- 🔨 Maven
 
-### 🔄 Steps:  
-
+### 🔄 Setup Steps:  
 1. Clone the repository:  
    ```sh
-   git clone https://github.com/yourusername/WheelCare.git
-   cd WheelCare
+   git clone https://github.com/yourusername/TireTrends.git
+   cd TireTrends
    ```  
+
 2. Configure the database in `application.properties`:  
    ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/tiretrends
+   spring.datasource.url=jdbc:mysql://localhost:3306/tiretrends?createDatabaseIfNotExist=true
    spring.datasource.username=root
    spring.datasource.password=yourpassword
    ```  
-3. Build and run the backend:  
+
+3. Build and run the application:  
    ```sh
    mvn clean install
    mvn spring-boot:run
    ```  
-4. Navigate to the frontend folder and start the frontend server:  
-   ```sh
-   cd frontend
-   npm install
-   npm start
-   ```  
 
-## 💻 Technologies Used  
+4. Access the application:  
+   - Frontend: `http://localhost:8080`
+   - Admin Login: `admin@toolnest.com` / `admin123`
 
-- **Backend:** 🖥️ Spring Boot, Hibernate, MySQL  
-- **Frontend:** 🌐 HTML, CSS, JavaScript, Thymeleaf, React (Optional)  
-- **Security:** 🔒 Spring Security (JWT Authentication)  
-- **Payment Gateway:** 💳 Stripe/PayPal Integration  
+## 🚀 Key Features in Detail
+
+### 🔍 Tire Finder
+The Tire Finder tool allows customers to find compatible tires by:
+- Entering vehicle make, model, and year
+- Inputting tire size directly (e.g., 225/45R17)
+
+This ensures customers can easily find the right products for their specific vehicles.
+
+### 🔧 Service Booking System
+Customers can book automotive services like:
+- Tire installation
+- Wheel alignment
+- Tire rotation
+- Flat repair
+
+The system manages time slots, pricing, and status updates throughout the service process.
+
+### 🚗 Vehicle Management
+Customers can save and manage multiple vehicles, including:
+- Make, model, and year
+- Tire sizes
+- Default vehicle setting for quicker shopping
 
 ## 📚 Contribution  
-
-1. 🍴 Fork the repository.  
-2. 🔄 Create a new branch (`feature-branch`).  
-3. ✅ Commit your changes.  
-4. 🚀 Push to the branch and submit a pull request.  
+1. 🍴 Fork the repository  
+2. 🔄 Create a new branch (`feature-branch`)  
+3. ✅ Commit your changes  
+4. 🚀 Push to the branch and submit a pull request  
 
 ## 📜 License  
-
 This project is licensed under the MIT License.  
 
 ## 📞 Contact  
-
 For inquiries or support, contact **[sadaruwan.optimous@gmail.com](mailto:sadaruwan.optimous@gmail.com)**.  
 
-🚀 *TireTrends – We Care for Your Journey!* 🚀  
+🚀 *TireTrends – Your Complete Tire & Automotive Solution!* 🚀
